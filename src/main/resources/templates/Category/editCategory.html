@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+</head>
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <!--        父类别类名选择-->
+        <div class="layui-form-item">
+            <div class="layui-form-item">
+                <label class="layui-form-label">父类别名称:</label>
+                <div class="layui-input-inline " style="width: 200px">
+                    <select name="parentCategory" lay-verify="" id="pid">
+                        <option value="0">请选择父类别:可不选</option>
+                    </select>
+
+                </div>
+            </div>
+            <!--                分类名-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别名称:</label>
+                <div class="layui-input-inline" style="width: 200px;">
+                    <input type="text" id="category_name" name="category_name"
+                           placeholder="请输入类别名称" autocomplete="off"
+                           class="layui-input" th:value="${category.categoryName}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <div class="layui-btn" lay-submit="" lay-filter="edit" id="sub">立即提交</div>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--    编辑页面数据绑定-->
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        var NowParentId = [[${category.parentId}]];
+        // console.log("当前分类父类ID" + NowParentId);
+        var NowCategoryName =[[${category.categoryName}]];
+
+        //用户名
+        var userName = [[${session.user.userName}]];
+
+        // 下拉选项数据绑定
+        $.ajax({
+            url: "/Category/getList",
+            type: "POST",
+            dataType: "json",
+            data:{
+              userName:userName
+            },
+            success: function (result) {
+                // 将传过来的对象转换为json字符串
+                let obj = JSON.stringify(result.datas);
+                // 将json字符串转换为json对象
+                var mydata = eval('(' + obj + ')');
+                for (var i = 0; i < mydata.length; i++) {
+                    if (mydata[i].parentId == 0 && mydata[i].categoryName!=NowCategoryName) {
+                        // var option = "<option id=" + mydata[i].categoryId + ">"
+                        //     + mydata[i].categoryName + "</option>";
+                        // $("#pid").append(option);
+                        $("#pid").append(new Option(mydata[i].categoryName, mydata[i].categoryId));
+                        $("#pid").val(NowParentId)
+                    }
+                }
+                form.render();
+            }
+        });
+
+        form.on('submit(edit)', function () {
+            if ($('#category_name').val()== "") {
+                layer.msg("分类别名不能为空！", {
+                    icon: 2
+                });
+                return;
+            }
+            var upParentId = $('#pid :selected').attr("value");
+            var upCategoryName = $('#category_name').val().trim().replace(/\ +/g, "");
+            var upCategoryId = [[${category.categoryId}]];
+            $.ajax({
+                url: "/Category/edit",
+                type: "POST",
+                data: {
+                    categoryId: upCategoryId,
+                    categoryName: upCategoryName,
+                    parentId: upParentId,
+                    userName:userName
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert("修改分类成功！", {icon: 1},function () {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                            xadmin.father_reload();
+                        });
+
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

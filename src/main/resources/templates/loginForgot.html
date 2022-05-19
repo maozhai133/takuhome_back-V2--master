@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+
+    <style>
+        .updateLable {
+            font-size: 13px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<!--    修改账户密码-->
+<div class="layui-col-md5" style="width: 500px;">
+    <div class="layui-card">
+        <div class="layui-card-header" th:style="'border-bottom:1px solid #f6f6f6'">找回密码</div>
+        <div class="layui-card-body">
+            <div class="layui-form" th:style="'padding-right:28px;margin-top:15px'">
+                <div class="layui-form-item">
+                    <label class="layui-form-label updateLable">绑定邮箱：</label>
+                    <div class="layui-input-block">
+                        <input type="email" name="bindingEamil" id="bindingEamil" required lay-verify="required"
+                               placeholder="输入绑定邮箱"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label updateLable">新密码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="newpwd" required lay-verify="required" id="newpwd"
+                               placeholder="请输入新密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label updateLable">确认新密码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="newrequiredpwd" required lay-verify="required"
+                               id="newrequiredpwd"
+                               placeholder="确认新密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label updateLable">验证码：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="identifyPwd" id="identifyPwd" required lay-verify="required"
+                               placeholder="请输入邮箱验证码" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux" th:style="'padding:0!important'">
+                        <input class="layui-btn" id="sendIdentify" type="button" value="发送邮箱验证码">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" id="updatePwd" lay-submit lay-filter="updatePwd">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script >
+
+</script>
+
+</body>
+</html>

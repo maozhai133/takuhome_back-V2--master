@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takuhome.back.dao.CategoryDao">
+
+    <resultMap id="CategoryMap" type="com.takuhome.back.entity.Category">
+        <result property="categoryId" column="category_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="parentName" column="parent_name"/>
+        <result property="userName" column="adm_username"/>
+    </resultMap>
+
+    <sql id="Base_result">
+        category_id,parent_id,category_name,parent_name,adm_username
+    </sql>
+    <!--    查询分类(后台下列表绑定用)-->
+    <select id="getCategory" resultType="com.takuhome.back.entity.Category">
+        select
+        <include refid="Base_result"/>
+        from taku_category
+        where adm_username=#{userName}
+    </select>
+
+    <!--    增添分类-->
+    <insert id="insertCategory" parameterType="com.takuhome.back.entity.Category">
+        insert into taku_category(parent_id,category_name,parent_name,adm_username)
+        values(#{parentId},#{categoryName},#{parentName},#{userName})
+    </insert>
+
+    <!--    根据父类ID查询父类名字-->
+    <select id="findParentById" resultType="String" parameterType="com.takuhome.back.entity.Category">
+        select category_name from taku_category where category_id=#{categoryId} and adm_username=#{userName}
+    </select>
+
+    <!--    根据父类ID查找子分类-->
+    <select id="findCategoryByParentId" resultType="com.takuhome.back.entity.Category" parameterType="com.takuhome.back.entity.Category">
+        select <include refid="Base_result"/> from taku_category where parent_id=#{parentId} and adm_username=#{userName}
+    </select>
+
+    <!--    分类查重-->
+    <select id="getCategoryByName" resultType="com.takuhome.back.entity.Category" parameterType="String">
+        select
+        <include refid="Base_result"/>
+        from taku_category where category_name=#{categoryName} and adm_username=#{userName}
+    </select>
+
+    <!--    查询所有分类并分页-->
+    <select id="getAllCategory" resultType="com.takuhome.back.entity.Category">
+        select
+        <include refid="Base_result"/>
+        from taku_category where adm_username=#{userName}  order by category_id limit #{pageNum},#{limit}
+    </select>
+    <!--    总记录数-->
+    <select id="countAllCategory" resultType="java.lang.Long">
+        select count(*) from taku_category where adm_username=#{userName}
+    </select>
+
+    <!--    根据分类Id查询-->
+    <select id="getCategoryById" resultType="com.takuhome.back.entity.Category" parameterType="com.takuhome.back.entity.Category">
+        select
+        <include refid="Base_result"/>
+        from taku_category where category_id=#{categoryId} and adm_username=#{userName}
+    </select>
+
+    <!--    修改分类-->
+    <update id="updateCategory" parameterType="com.takuhome.back.entity.Category">
+        update taku_category
+        <set>
+            <if test="parentId != null">
+                parent_id=#{parentId},
+            </if>
+            <if test="categoryName != null">
+                category_name=#{categoryName},
+            </if>
+            <if test="parentName != null">
+                parent_name=#{parentName}
+            </if>
+        </set>
+        where category_id=#{categoryId} and adm_username=#{userName}
+    </update>
+
+    <!--    删除分类-->
+    <delete id="delByCategoryId" parameterType="com.takuhome.back.entity.Category">
+        delete from taku_category where category_id=#{categoryId} and adm_username=#{userName}
+    </delete>
+
+    <!--    模糊查询并分页-->
+    <select id="getAllCategoryByNamePage" resultType="com.takuhome.back.entity.Category">
+        select<include refid="Base_result"/> from taku_category where adm_username=#{userName} and category_name like '%${categoryName}%' limit #{pageNum},#{limit}
+    </select>
+    <select id="getCategoryByName2" resultType="java.lang.Long" parameterType="string">
+        select count(*) from taku_category where adm_username=#{userName} and category_name like '%${categoryName}%'
+    </select>
+
+
+</mapper>

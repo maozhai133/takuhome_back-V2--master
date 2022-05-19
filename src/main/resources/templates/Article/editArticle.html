@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+    <!--    select 选项样式覆写-->
+    <style>
+        .layui-form-select dl {
+            top: 42px;
+            bottom: unset;
+            max-height: 150px;
+        }
+    </style>
+</head>
+<body>
+<div th:style="'background: #f1f1f1'">
+    <div id="box">
+        <input th:value="${article.categoryName}" hidden="hidden" id="tid">
+        <input th:value="${article.articleTag1}" hidden="hidden" id="tag_1">
+        <input th:value="${article.articleTag2}" hidden="hidden" id="tag_2">
+        <input th:value="${article.articleTag3}" hidden="hidden" id="tag_3">
+        <input th:value="${article.articleIsTop}" hidden="hidden" id="article_isTop">
+
+        <form class="layui-form" action="" enctype="multipart/form-data"
+              id="myform">
+            <!--        <h3-->
+            <!--                style="text-align: center; margin-bottom: 20px; text-shadow: 1px 1px 2px red;">编辑博文-->
+            <!--        </h3>-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">文章标题</label>
+                <div class="layui-input-block" style="width: 420px;">
+                    <input type="text" name="title" required lay-verify="required"
+                           placeholder="请输入标题" autocomplete="off" class="layui-input"
+                           id="article_title" th:value="${article.articleTitle}">
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="z-index: 1999;">
+                <label class="layui-form-label">文章分类</label>
+                <div class="layui-input-inline" style="width: 180px;">
+                    <select name="first_category" lay-verify="required"
+                            id="first_category" lay-filter="myFirstSelect">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 180px;">
+                    <select name="second_category" lay-verify="required"
+                            id="second_category" lay-filter="mySecondSelect">
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">置顶</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isTop" value="是" title="是" id="isT">
+                    <input type="radio" name="isTop" value="否" title="否" checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <!-- 在这里放一个img标签 默认不显示 -->
+                    <button type="button" class="layui-btn" id="test1">
+                        <i class="layui-icon">&#xe67c;</i>选择封面图
+                    </button>
+                    <button type="button" class="layui-btn" id="uploadImg">
+                        <i class="layui-icon">&#xe67c;</i>上传封面图
+                    </button>
+                    <!--  style="display:none;" -->
+                    <!--  隐藏的input,一个隐藏的input（用于保存文件url）-->
+                    　　　　 <input type="hidden" id="img_url" name="img" th:value="${article.articleImage}"/>
+                    <!--                图片预览区域-->
+                    <div style="height: 20px; width: 100%;"></div>
+                    <img id="article_image" class="article_image"
+                         th:src="${article.articleImage}"
+                         style="margin-top: 20px;width:245px;height:140px"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文章内容</label>
+                <div class="layui-input-block">
+                    <div id="myEditor" name="article_content"
+                         style="width: 900px; height: 400px;"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签</label>
+                <div class="layui-input-inline" style="width: 150px;">
+                    <select name="tag1" id="tag1" lay-verify="" lay-search>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 150px;">
+                    <select name="tag2" id="tag2" lay-verify="" lay-search>
+                        <option id="0">可不选</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 150px;">
+                    <select name="tag3" id="tag3" lay-verify="" lay-search>
+                        <option id="0">可不选</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">博文简介</label>
+                <div class="layui-input-block">
+					<textarea placeholder="请输入内容" class="layui-textarea"
+                              id="article_desc"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin-top: 50px;">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-lg" type="button" lay-submit
+                            lay-filter="edit" style="margin-top: -55px">保存修改
+                    </button>
+                    <button class="layui-btn layui-btn-danger layui-btn-lg" type="button"
+                            style="margin-top: -55px;margin-left: 5%" onclick="shutdown()">取消修改
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    //用户名
+    var userName = [[${session.user.userName}]];
+
+    //取消修改关闭当前编辑窗
+    shutdown = function () {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+        xadmin.father_reload();
+    };
+
+    //一级分类列表绑定
+    function getFirstCategory() {
+        $.ajax({
+            url: "/Category/getList",
+            type: "POST",
+            data: {
+                userName: userName
+            },
+            dataType: "json",
+            success: function (result) {
+                //将传过来的对象转换为json字符串
+                let obj = JSON.stringify(result.datas);
+                //将json字符串转换为json对象
+                var mydata = eval('(' + obj + ')');
+                for (var i = 0; i < mydata.length; i++) {
+                    if (mydata[i].parentId == 0) {
+                        var option = "<option id=" + mydata[i].categoryId + ">"
+                            + mydata[i].categoryName + "</option>";
+                        $("#first_category").append(option);
+                        layui.form.render('select');
+                    }
+                }
+            }
+        });
+        $.ajaxSetup({
+            cache: false
+        });
+    }
+
+    //绑定标签下拉列表
+    function getTagList() {
+        $.ajax({
+            url: "/Tag/getTagList",
+            type: "POST",
+            data: {
+                userName: userName
+            },
+            dataType: "json",
+            success: function (result) {
+                //将传过来的对象转换为json字符串
+                let obj = JSON.stringify(result.datas);
+                //将json字符串转换为json对象
+                var mydata = eval('(' + obj + ')');
+                for (var i = 0; i < mydata.length; i++) {
+                    var option = "<option id=" + mydata[i].tagId + ">"
+                        + mydata[i].tagName + "</option>>";
+                    $("#tag1").append(option);
+                    $("#tag2").append(option);
+                    $("#tag3").append(option);
+                    layui.form.render('select');
+                }
+            }
+        });
+        $.ajaxSetup({
+            cache: false
+        });
+    }
+
+    //获取默认的状态
+    function getSelectedState() {
+        //alert(1);
+        var article_isTop = $("#article_isTop").val();
+        if (article_isTop != 0) {
+            $("#isT").attr("checked", true);
+            layui.form.render();
+        }
+    }
+
+    //获取选中的标签
+    function getSelectedTag() {
+        // console.log([[${article.articleTag1}]]);
+        // console.log([[${article.articleTag2}]]);
+        // console.log([[${article.articleTag3}]]);
+        //遍历 将某个置为选中状态
+        $('#tag1 option').each(function () {
+            if ($(this).attr('id') == [[${article.articleTag1}]]) {
+                $(this).attr("selected", true);
+            }
+        });
+        $('#tag2 option').each(function () {
+            if ($(this).attr('id') == [[${article.articleTag2}]]) {
+                $(this).attr("selected", true);
+            }
+        });
+        $('#tag3 option').each(function () {
+            if ($(this).attr('id') == [[${article.articleTag3}]]) {
+                $(this).attr("selected", true);
+            }
+        });
+        layui.form.render('select');
+    }
+
+    //获取选中的分类
+    //通过定时模拟器，模拟点击效果
+    function getSelectedCategory() {
+        var parentName = [[${parentName}]];
+        var categoryName = [[${article.categoryName}]];
+        setTimeout(function () {
+            // console.log(parentName+categoryName);
+            $('select[name="first_category"]').next().find('.layui-anim').children("dd[lay-value=" + parentName + "]").click();
+            $('select[name="second_category"]').next().find('.layui-anim').children("dd[lay-value=" + categoryName + "]").click();
+        }, 100);
+        layui.form.render('select');
+    }
+
+    //初始化
+    layui.use(['form', 'layer'], function () {
+
+        //同步请求
+        $.ajaxSettings.async = false;
+
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //1.初始化form表单
+        var form = layui.form;
+        //2.初始化富文本编辑器
+        var ue = UE.getEditor('myEditor', {initialFrameHeight: 500});
+        //获取博文内容
+        ue.ready(function () {
+            ue.setContent([[${article.articleContent}]]);
+        });
+        //3.初始化描述
+        $("#article_desc").val([[${article.articleDesc}]]);
+        //4.下拉分类选项数据绑定
+        getFirstCategory();
+        //5.下拉标签选项数据绑定
+        getTagList();
+        //6.是否置顶绑定
+        getSelectedState();
+        //7.获取选中的标签
+        getSelectedTag();
+        //8.获取选中分类
+        getSelectedCategory();
+        //获得二级分类
+        form.on('select(myFirstSelect)', function (data2) {
+            $('#second_category').empty();//清空刷新二级分类
+            var parent_id = $('#first_category :selected').attr("id");
+            // console.log("父分类ID" + parent_id);
+            $.ajax({
+                url: "/Category/getCategoryByParentId",
+                type: "POST",
+                data: {
+                    parentId: parent_id,
+                    userName: userName
+                },
+                dataType: "json",
+                success: function (result) {
+                    let obj = JSON.stringify(result.datas);
+                    var mydata = eval('(' + obj + ')');
+                    // console.log(mydata);
+                    for (var i = 0; i < mydata.length; i++) {
+                        var option = "<option id=" + mydata[i].categoryId + ">"
+                            + mydata[i].categoryName + "</option>";
+                        $("#second_category").append(option);
+                        layui.form.render('select');
+                    }
+                }
+            });
+            $.ajaxSetup({
+                cache: false
+            });
+            layui.form.render('select')
+        });
+
+        //编辑器图片上传
+        $(function () {
+            UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+            UE.Editor.prototype.getActionUrl = function (action) {
+                // 重点:这里要和配置中的imageActionName值同样
+                if (action == 'uploadimage') {
+                    // 调用后端的图片上传接口
+                    return '/ueditor/uploadImageData';
+                    // }else if(action == 'uploadfile'){
+                    //     return '/ueditor/uploadFileData';
+                } else {
+                    return this._bkGetActionUrl.call(this, action);
+                }
+            }
+        });
+
+        //上传图片
+        layui.use('upload', function () {
+            var upload = layui.upload;
+            var uploadInst = upload.render({
+                elem: '#test1' //绑定元素
+                , url: '/uploadimg' //上传接口
+                , accept: 'file' //允许上传的文件类型
+                , size: 20480
+                , exts: 'png|jpg|jpeg'
+                , auto: false
+                , bindAction: '#uploadImg'
+                , before: function (obj) { // 图片上传回调
+                    obj.preview(function (index, picture, result) {
+                        $('#article_image').attr("src", result)
+                            .attr("style",
+                                "display:block;width:245px;height:140px;");
+                    });
+                }
+                , done: function (res) {
+                    //上传完毕回调
+                    if (res.code == 0) {
+                        document.getElementById("img_url").value = res.data;
+                        return layer.msg("上传图片成功！！", {icon: 1});
+                    } else {
+                        return layer.msg("上传图片失败！！", {icon: 2});
+                    }
+                }
+                , error: function () {
+                    //请求异常回调
+                }
+            });
+        });
+
+        form.on('submit(edit)', function () {
+            //获取表格相关数据
+            var tag_id1 = $('#tag1 :selected').attr("id");
+            var tag_id2 = $('#tag2 :selected').attr("id");
+            var tag_id3 = $('#tag3 :selected').attr("id");
+            var second_id = $('#second_category :selected').attr("id");
+            var article_title = $('#article_title').val();
+            var article_desc = $('#article_desc').val();
+            var article_content = UE.getEditor('myEditor').getContent();
+            var article_image = $('#img_url').val();
+            var article_isTop_name = $('input[name = "isTop"]:checked').val();
+            var article_isTop = 0;
+            if (article_isTop_name == '是') {
+                article_isTop = 1;
+            }
+
+            //获取博文对象的其他数据(评论数量、浏览数量等)
+            var articleId = [[${article.articleId}]];
+            var articleLikeNum = [[${article.articleLikeNum}]];
+            var articleViews = [[${article.articleViews}]];
+            var countComment = [[${article.countComment}]];
+
+
+            //验证
+            if (second_id == null) {
+                layer.msg("请选择二级分类,如果没有请添加！", {
+                    icon: 2
+                });
+                return;
+            }
+            if (tag_id2 == tag_id3 && tag_id2 != 0) {
+                layer.msg("不能多次选择同一个标签！", {
+                    icon: 2
+                });
+                return;
+            }
+            if (tag_id1 === tag_id2 || tag_id1 === tag_id3) {
+                layer.msg("不能多次选择同一个标签！", {
+                    icon: 2
+                });
+                return;
+            }
+            if (article_image == "") {
+                layer.msg("请上传封面图！", {
+                    icon: 2
+                });
+                return;
+            }
+            if (article_desc == "") {
+                layer.msg("博文简介不能为空！", {
+                    icon: 2
+                });
+                return;
+            }
+            //提交
+            $.ajax({
+                url: "/Article/edit",
+                type: "POST",
+                data: {
+                    articleId: articleId,
+                    articleContent: article_content,
+                    articleLikeNum: articleLikeNum,
+                    articleViews: articleViews,
+                    articleImage: article_image,
+                    articleTitle: article_title,
+                    articleIsTop: article_isTop,
+                    categoryId: second_id,
+                    articleDesc: article_desc,
+                    countComment: countComment,
+                    articleTag1: tag_id1,
+                    articleTag2: tag_id2,
+                    articleTag3: tag_id3,
+                    userName: userName
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert("修改博文成功！", {icon: 1}, function () {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                            xadmin.father_reload();
+                        });
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                }
+            });
+            return false;
+        })
+    });
+</script>
+
+
+</body>
+</html>

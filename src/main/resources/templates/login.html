@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>博客后台管理登录/注册</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" th:href="@{/xadmin/login/font-awesome-4.7.0/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/xadmin/login/index.css}">
+    <link rel="stylesheet" th:href="@{/xadmin/login/decoration.css}">
+    <link rel="stylesheet" th:href="@{/xadmin/lib/layui/css/layui.css}"/>
+    <style>
+        #sendIdentify {
+            width: 100px;
+            padding: 10px;
+            margin-left: 160px;
+            margin-top: -67px;
+            color: #FFFFFF;
+            background: #004455
+        }
+    </style>
+</head>
+<body>
+<div STYLE="height: 100VH">
+    <!--    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">-->
+    <!--        <path fill="#0099ff" fill-opacity="1"-->
+    <!--              d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">-->
+    <!--        </path>-->
+    <!--    </svg>-->
+    <div th:style="'height:100%;background:url(/imgsrc/bg.jpg) no-repeat;width:100%;background-size: 100% 100%;'">
+        <!--        顶部装饰-->
+        <ul class="lightrope">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <!--        -->
+        <div class="user">
+            <i class="fa fa-user"></i>
+            <div class="head">account login</div>
+            <!--            <img th:src="@{/imgsrc//login-log.png}">-->
+        </div>
+        <div class="container">
+            <!--            登录-->
+            <div class="box login">
+                <div class="form-content">
+                    <div class="avtar">
+                        <div class="pic"><img th:src="@{/xadmin//login/img/1.jpg}" alt=""></div>
+                    </div>
+                    <h1>Welcome back</h1>
+                    <!--                <form th:action="@{/login}" class="form" method="post">-->
+                    <div class="form">
+                        <div>
+                            <i class="fa fa-user-o"></i>
+                            <input type="text" name="userName" id="username" placeholder="用户名">
+                        </div>
+                        <div>
+                            <i class="fa fa-key"></i>
+                            <input type="password" name="passWord" id="password" placeholder="密码">
+                        </div>
+                        <div>
+                            <i class="layui-icon fa">&#xe672;</i>
+                            <input type="text" name="cpacha" id="cpacha" placeholder="验证码">
+                        </div>
+                        <div th:style="'text-align:center'">
+                            <img id="cpacha-img" title="点击切换验证码" style="cursor:pointer;"
+                                 src="get_cpacha?vl=4&w=150&h=40&type=loginCpacha" width="140px" height="40px"
+                                 onclick="changeCpacha()">
+                            <div>看不清？点击图片更换验证码</div>
+                        </div>
+                        <div class="btn login-button">
+                            <button>登 录</button>
+                        </div>
+                        <p class="btn-something">
+                            <a id="resetPwd"><span class="re-password" style="color: #0066ff;cursor: pointer;font-weight: 500">忘记密码?</span></a>
+                        </p>
+                    </div>
+                    <!--                </form>-->
+                    <p class="btn-something">
+                        还没有注册账户 ? 现在注册-><span class="signupbtn">注&nbsp;册</span>
+                    </p>
+                </div>
+            </div>
+            <!--            注册-->
+            <div class="box signup">
+                <div class="form-content">
+                    <div class="avtar">
+                        <div class="pic"><img th:src="@{/xadmin//login/img/2.jpg}" alt=""></div>
+                    </div>
+                    <h1>Let's get started</h1>
+                    <!--                <form  class="form" method="post">-->
+                    <div class="form">
+                        <div>
+                            <i class="fa fa-user-o"></i>
+                            <input type="text" id="sign-username" placeholder="用户名" name="sign-username"
+                                   class="myinput">
+                        </div>
+                        <div>
+                            <i class="fa fa-key"></i>
+                            <input type="password" id="sign-password" placeholder="密码" name="sign-password"
+                                   class="myinput">
+                        </div>
+                        <div>
+                            <i class="fa fa-envelope-o"></i>
+                            <input type="email" id="sign-email" placeholder="邮箱" name="sign-email">
+                        </div>
+                        <div>
+                            <i class="layui-icon fa">&#xe672;</i>
+                            <input type="text" id="sign-identify" name="sign-identify" placeholder="邮箱验证码"
+                                   th:style="'margin-right: 111px;width: 150px;'">
+                            <div class="btn" id="identify-btn">
+                                <!--                                <button id="sendIdentify"  th:style="'width: 100px;margin-left: 160px;margin-top: -70px;background-color: #004455;'">-->
+                                <!--                                    发送验证码-->
+                                <!--                                </button>-->
+                                <input id="sendIdentify" th:style="''" type="button" value="发送验证码">
+                            </div>
+                        </div>
+                        <div class="btn register-button">
+                            <button>注 册</button>
+                        </div>
+                    </div>
+                    <!--                </form>-->
+                    <p class="btn-something">
+                        已经拥有账户了 ? 点击登录-><span class="loginbtn">登&nbsp;录</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/xadmin/login/js/particles.min.js}"></script>
+<script th:src="@{/xadmin/login/js/app.js}"></script>
+<script th:src="@{/xadmin/login/js/jquery-1.8.0.min.js}"></script>
+<script th:src="@{/xadmin/js/jquery.cookie.js}"></script>
+<script th:src="@{/xadmin/lib/layui/layui.js}" charset="utf-8"></script>
+
+<script type="text/javascript">
+    let login = document.querySelector(".login");
+    let signup = document.querySelector(".signup");
+
+    let loginbtn = document.querySelector(".loginbtn");
+    let siginupbtn = document.querySelector(".signupbtn");
+
+    let user = document.querySelector(".head");
+
+    //页面翻转
+    siginupbtn.addEventListener("click", () => {
+        login.style.transform = "rotateY(180deg)"
+        signup.style.transform = "rotateY(0deg)";
+
+        user.innerHTML = "create account"
+    })
+
+    loginbtn.addEventListener("click", () => {
+        login.style.transform = "rotateY(0deg)"
+        signup.style.transform = "rotateY(-180deg)";
+
+        user.innerHTML = "account login"
+    })
+
+    function hasClass(elem, cls) {
+        cls = cls || '';
+        if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
+        return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
+    }
+
+    function addClass(ele, cls) {
+        if (!hasClass(ele, cls)) {
+            ele.className = ele.className == '' ? cls : ele.className + ' ' + cls;
+        }
+    }
+
+    function removeClass(ele, cls) {
+        if (hasClass(ele, cls)) {
+            var newClass = ' ' + ele.className.replace(/[\t\r\n]/g, '') + ' ';
+            while (newClass.indexOf(' ' + cls + ' ') >= 0) {
+                newClass = newClass.replace(' ' + cls + ' ', ' ');
+            }
+            ele.className = newClass.replace(/^\s+|\s+$/g, '');
+        }
+    }
+
+
+    //验证码
+    function changeCpacha() {
+        $("#cpacha-img").attr("src", 'get_cpacha?vl=4&w=150&h=40&type=loginCpacha&t=' + new Date().getTime());
+    }
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //登录
+        document.querySelector(".login-button").onclick = function () {
+
+            var userName = $("#username").val();
+            var passWord = $("#password").val();
+            var cpacha = $("#cpacha").val();
+
+            if (userName == '' || userName == 'undefined') {
+                layer.alert("请填写用户名！");
+                return;
+            }
+            if (passWord == '' || passWord == 'undefined') {
+                layer.alert("请填写密码！");
+                return;
+            }
+            if (cpacha == '' || cpacha == 'undefined') {
+                layer.alert("请填写验证码！");
+                return;
+            }
+            // console.log(userName);
+            $.ajax({
+                url: '/login',
+                data: {
+                    userName: userName,
+                    passWord: passWord,
+                    cpacha: cpacha
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (results) {
+                    if (results.code == 200) {
+                        // alert("登录成功！");
+                        console.log('登录成功');
+                        layer.alert("登录成功,欢迎使用！", {icon: 1}, function () {
+                            window.parent.location = '/index';
+                        })
+                        // window.parent.location = '/index';
+                    } else {
+                        // alert(results.msg);
+                        layer.alert(results.msg);
+                        $('#cpacha').val("");
+                        changeCpacha();
+                    }
+                }
+            });
+        }
+
+        //注册
+        document.querySelector('.register-button').onclick = function () {
+
+            var username = $('#sign-username').val();
+            var password = $('#sign-password').val();
+            var code = $('#sign-identify').val();
+            var email = $('#sign-email').val();
+
+            //基本验证
+            //1.用户名
+            if (!/^[a-zA-Z0-9_-]{4,16}$/.test(username)) {
+                layer.alert("用户名格式错误，请输入4到16位（可包含字母，数字，下划线，减号）!")
+                return;
+            }
+            //密码
+            if (!/^.{6,}$/.test(password)) {
+                layer.alert("密码至少6位，请重新输入!")
+                return;
+            }
+            //邮箱
+            if (email == '' || email == 'undefined') {
+                layer.alert("请先填写邮箱！");
+                return;
+            }
+            //验证码
+            if (code == '' || code == 'undefined') {
+                layer.alert("验证码不能为空！")
+                return;
+            }
+
+            $.ajax({
+                url: '/Register/registerUser',
+                data: {
+                    'userName': username,
+                    'passWord': password,
+                    'userEmail': email,
+                    'identify': code
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (results) {
+                    if (results.code == 200) {
+                        layer.alert('注册成功！请前往登录页面登录！', {icon: 1}, function () {
+                            $('#sign-username').val("");
+                            $('#sign-password').val("");
+                            $('#sign-identify').val("");
+                            $('#sign-email').val("");
+                            window.parent.location = '/login';
+                        });
+                    } else {
+                        console.log("注册失败")
+                        layer.alert(results.msg);
+                    }
+                }
+            });
+        }
+
+        //忘记密码
+        document.querySelector("#resetPwd").onclick = function () {
+            layer.open({
+                title: ["找回密码", "text-align:center"],
+                type: 2,
+                offset: 'auto',//位置
+                area: ["480px","350px"],//大小
+                content: ['/resetPassword/openRePwd'],
+                anim: 1,
+                end: function () {
+                    location.reload()
+                }
+            })
+        }
+
+        //获取验证码
+        $(function () {
+            document.querySelector('#identify-btn').onclick = function () {
+
+                //防刷新:检测是否存在cookie
+                if ($.cookie("captchaEmail")) {// 判断cookie存不存在
+                    var count = $.cookie("captchaEmail"); // 从cookie中取出count
+                    var btn = $('#sendIdentify');
+                    btn.text(count + '秒后可重发').attr('disabled', true).css('cursor', 'not-allowed');
+                    var resend = setInterval(function () {
+                        count--;
+                        if (count > 0) {
+                            btn.val(count + '秒后可重发').attr('disabled', true).css('cursor', 'not-allowed'); //把count保存到cookie中
+                            $.cookie("captchaEmail", count, {path: '/', expires: (1 / 86400) * count});
+                        } else {
+                            clearInterval(resend);
+                            btn.val("获取验证码").removeClass('disabled').removeAttr('disabled style');
+                        }
+                    }, 1000);
+                }
+
+                //检查邮箱是否填写
+                var email = $('#sign-email').val();
+                if (email == '' || email == 'undefined') {
+                    layer.alert("请先填写邮箱！");
+                    return;
+                }
+                //验证邮箱格式是否正确
+                if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(email)) {
+                    layer.alert("邮箱格式错误，请输入正确的邮箱!")
+                    return;
+                }
+                // console.log('邮箱:'+email);
+                $.ajax({
+                    url: '/Register/sendEmail',
+                    data: {
+                        email: email
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (results) {
+                        if (results.code == 200) {
+                            layer.alert('验证码已发送,请及时查看你的邮箱!');
+                        } else {
+                            layer.alert('发送失败，请稍后再试！');
+                        }
+                    }
+                });
+
+                //改变按钮状态
+                var btn = $('#sendIdentify');
+                var count = 60;
+                var resend = setInterval(function () {
+                    count--;
+                    if (count > 0) {
+                        btn.val(count + "秒后可重发");
+                        $.cookie("captchaEmail", count, {path: '/', expires: (1 / 86400) * count});
+                    } else {
+                        clearInterval(resend);
+                        btn.val("获取验证码").removeAttr('disabled style')
+                    }
+                }, 1000);
+                btn.attr('disabled', true).css('cursor', 'not-allowed');
+            }
+        })
+    })
+
+
+    //页面特效
+    $(function () {
+        $("body").click(function (e) {
+            // 创建div父元素
+            var parentDiv = $("<div></div>");
+            // 设置属性
+            parentDiv.css({
+                "width": "20px",
+                "height": "20px",
+                "position": "absolute",
+                "z-index": "10000"
+            });
+            // 创建一个div容器元素
+            var conDiv = $("<div></div>");
+            conDiv.css({
+                "width": "100%",
+                "height": "100%",
+                "position": "relative"
+            });
+            // 将容器元素添加到父元素中
+            parentDiv.append(conDiv);
+            // 创建子元素
+            var childDiv = conDiv.append("<div></div><div></div><div></div>");
+            var divs = conDiv.children();
+            // 设置颜色随机
+            var color = "rgb(" + parseInt(Math.random() * 250 + 5)
+                + "," + parseInt(Math.random() * 250 + 5)
+                + "," + parseInt(Math.random() * 250 + 5) + ")";
+            // 设置子元素属性
+            $(divs[0]).css({
+                "width": "60%",
+                "height": "60%",
+                "background-color": color,
+                "border-radius": "100%"
+            });
+            $(divs[1]).css({
+                "width": "60%",
+                "height": "60%",
+                "background-color": color,
+                "border-radius": "100%",
+                "position": "absolute",
+                "top": "0",
+                "right": "0"
+            });
+            $(divs[2]).css({
+                "width": "60%",
+                "height": "60%",
+                "background-color": color,
+                "position": "absolute",
+                "top": "20%",
+                "left": "20%",
+                "transform": "rotate(45deg)",
+                "-ms-transform": "rotate(45deg)",
+                "-webkit-transform": "rotate(45deg)"
+            });
+            // 通过事件对象获取鼠标坐标
+            var x = e.pageX;
+            var y = e.pageY;
+            // 修改div父元素位置
+            parentDiv.css({"left": x + "px", "top": y + "px"});
+            // 添加到body中
+            $("body").append(parentDiv);
+            // 2秒后消失
+            parentDiv.animate({
+                "width": "25px",
+                "height": "25px",
+                "top": (y - 200) + "px",
+                "opacity": 0
+            }, 2000, function () {
+                parentDiv.remove();
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.takuhome.back.dao.TagDao">
+    <resultMap id="TagMap" type="com.takuhome.back.entity.Tag">
+        <result property="tagId" column="tag_id"/>
+        <result property="tagName" column="tag_name"/>
+        <result property="userName" column="adm_username"/>
+    </resultMap>
+
+    <sql id="Base_result">
+        tag_id,tag_name,adm_username
+    </sql>
+
+    <!--    添加标签-->
+    <insert id="addTag" parameterType="com.takuhome.back.entity.Tag">
+        insert into taku_tag(tag_name,adm_username) values(#{tagName},#{userName})
+    </insert>
+
+    <!--    修改标签-->
+    <update id="updateTag" parameterType="com.takuhome.back.entity.Tag">
+        update taku_tag
+        <set>
+            <if test="tagName != null">
+                tag_name = #{tagName}
+            </if>
+        </set>
+        where tag_id = #{tagId} and adm_username=#{userName}
+    </update>
+
+    <!--    标签查重-->
+    <select id="getTagByName" resultType="com.takuhome.back.entity.Tag" parameterType="string">
+        select
+        <include refid="Base_result"/>
+        from taku_tag where tag_name=#{tagName} and adm_username=#{userName}
+    </select>
+
+    <!--    查询所有标签并分页-->
+    <select id="getAllTag" resultType="com.takuhome.back.entity.Tag">
+        select
+        <include refid="Base_result"/>
+        from taku_tag where adm_username=#{userName} order by tag_id limit #{pageNum},#{limit}
+    </select>
+    <!--    总记录数-->
+    <select id="countAllTag" resultType="java.lang.Long">
+        select count(*) from taku_tag where adm_username=#{userName}
+    </select>
+
+    <!--    根据Id查询标签-->
+    <select id="getTagById" resultType="com.takuhome.back.entity.Tag" parameterType="com.takuhome.back.entity.Tag">
+        select
+        <include refid="Base_result"/>
+        from taku_tag where tag_id=#{tagId} and adm_username=#{userName}
+    </select>
+
+    <!--   删除标签-->
+    <delete id="delByTagId" parameterType="com.takuhome.back.entity.Tag">
+        delete from taku_tag where tag_id=#{tagId} and adm_username=#{userName}
+    </delete>
+
+    <!--    模糊查询并分页-->
+    <select id="getAllTagByNamePage" resultType="com.takuhome.back.entity.Tag">
+        select<include refid="Base_result"/> from taku_tag where adm_username=#{userName} and tag_name like '%${tagName}%' limit #{pageNum},#{limit}
+    </select>
+    <select id="getTagByNamePage" resultType="java.lang.Long" parameterType="string">
+        select count(*) from taku_tag where adm_username=#{userName} and tag_name like '%${tagName}%'
+    </select>
+
+    <!--     查询所有标签(绑定下拉列表)-->
+    <select id="getTag" resultType="com.takuhome.back.entity.Tag" parameterType="string">
+        select<include refid="Base_result"/> from taku_tag where adm_username=#{userName}
+    </select>
+
+</mapper>

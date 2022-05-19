@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+
+    <style>
+        .updateLable {
+            font-size: 13px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-row layui-col-space15">
+    <!--    个人信息-->
+    <div class="layui-col-md7">
+        <div class="layui-card" th:style="'margin:15px'">
+            <div class="layui-card-header" th:style="'border-bottom:1px solid #f6f6f6'">个人信息</div>
+            <div class="layui-card-body">
+                <div class="layadmin-homepage-pad-ver">
+                    <div th:style="'text-align: right;margin:10px'">
+                        <button id="editUser" th:style="'border-radius:15px'" type="button"
+                                class="layui-btn layui-btn-normal">编辑个人信息
+                        </button>
+                    </div>
+                    <div th:style="'text-align: center;margin-top:10px'">
+                        <input name="avatar" id="photo" type="hidden" th:value="${session.user.headImg}"></br>
+                        <img th:src="${session.user.headImg}" class="layui-circle picture" id="picture" width="200px"
+                             height="200px">
+                        <div th:style="'margin-top:15px'"><i>昵称：</i><span style="font-size: 18px;font-weight: bold"
+                                                                          th:text="${session.user.nickName}"
+                                                                          th:value="${session.user.nickName}"></span>
+                        </div>
+                        <div th:style="'margin-top:15px'"><i>个人邮箱：</i><span style="font-size: 16px;font-weight: bold"
+                                                                            th:text="${session.user.userEmail}"
+                                                                            th:value="${session.user.userEmail}"></span>
+                        </div>
+                        <div><i>个人简介：</i>
+                            <p th:style="'font-weight:bold'" th:text="${session.user.userDesc}"
+                               th:value="${session.user.userDesc}"></p></div>
+                        <div th:style="'border-top:1px solid #f6f6f6;padding:10px'">
+                            <div th:style="'font-size:24px;'">
+                                <i>发表文章数量：</i><span th:style="'font-weight:bold'" th:text="${session.count}"/>&nbsp;篇
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    修改账户密码-->
+    <div class="layui-col-md5">
+        <div class="layui-card" th:style="'margin:15px'">
+            <div class="layui-card-header" th:style="'border-bottom:1px solid #f6f6f6'">修改密码</div>
+            <div class="layui-card-body">
+                <!--                <form class="layui-form" action="" th:style="'padding-right:28px;margin-top:15px'">-->
+                <div class="layui-form" th:style="'padding-right:28px;margin-top:15px'">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label updateLable">原密码：</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="oldpwd" required lay-verify="required" id="oldpwd"
+                                   placeholder="请输入原密码"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label updateLable">新密码：</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="newpwd" required lay-verify="required" id="newpwd"
+                                   placeholder="请输入新密码"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label updateLable">确认新密码：</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="newrequiredpwd" required lay-verify="required"
+                                   id="newrequiredpwd"
+                                   placeholder="确认新密码"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label updateLable">绑定邮箱：</label>
+                        <div class="layui-input-block">
+                            <input type="email" name="bindingEamil" id="bindingEamil" required lay-verify="required"
+                                   placeholder="输入绑定邮箱"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label updateLable">验证码：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="identifyPwd" id="identifyPwd" required lay-verify="required"
+                                   placeholder="请输入邮箱验证码" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux" th:style="'padding:0!important'">
+                            <input class="layui-btn" id="sendIdentify" type="button" value="发送邮箱验证码">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" id="updatePwd" lay-submit lay-filter="updatePwd">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--                </form>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+        var userName = [[${session.user.userName}]];
+        var userEmail = [[${session.user.userEmail}]];
+
+        document.querySelector("#editUser").onclick = function () {
+            var index = layer.open({
+                title: ["编辑个人信息", "text-align:center"],
+                type: 2,
+                offset: "auto",//位置
+                area: ["90%", '555px'],//大小
+                content: ['/User/editUser/'],
+                anim: 1,
+                end: function () {
+                    table.reload('table');
+                }
+            });
+            // layer.full(index);
+        }
+
+
+        //发送邮箱验证码
+        document.querySelector('#sendIdentify').onclick = function () {
+            //防刷新:检测是否存在cookie
+            if ($.cookie("captchaEmailPwd")) {// 判断cookie存不存在
+                var count = $.cookie("captchaEmail"); // 从cookie中取出count
+                var btn = $('#sendIdentify');
+                btn.text(count + '秒后可重发').attr('disabled', true).css('cursor', 'not-allowed');
+                var resend = setInterval(function () {
+                    count--;
+                    if (count > 0) {
+                        btn.val(count + '秒后可重发').attr('disabled', true).css('cursor', 'not-allowed'); //把count保存到cookie中
+                        $.cookie("captchaEmailPwd", count, {path: '/', expires: (1 / 86400) * count});
+                    } else {
+                        clearInterval(resend);
+                        btn.val("获取验证码").removeClass('disabled').removeAttr('disabled style');
+                    }
+                }, 1000);
+            }
+
+            //检查邮箱是否填写
+            var email = $('#bindingEamil').val();
+            if (email == '' || email == 'undefined') {
+                layer.alert("请先填写邮箱！");
+                return;
+            }
+            //验证邮箱格式是否正确
+            if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(email)) {
+                layer.alert("邮箱格式错误，请输入正确的邮箱!")
+                return;
+            }
+
+            //验证是否是当前登录的邮箱
+            if (!(userEmail == email)) {
+                layer.alert("此邮箱非当前登录用户的绑定邮箱，请重新输入!")
+                return;
+            }
+
+            // console.log('邮箱:'+email);
+            $.ajax({
+                url: '/User/sendEmail',
+                data: {
+                    email: email,
+                    userName: userName
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (results) {
+                    if (results.code == 200) {
+                        layer.alert('验证码已发送,请及时查看你的邮箱!');
+                    } else {
+                        layer.alert('发送失败，请稍后再试！');
+                    }
+                }
+            });
+            //改变按钮状态
+            var btn = $('#sendIdentify');
+            var count = 60;
+            var resend = setInterval(function () {
+                count--;
+                if (count > 0) {
+                    btn.val(count + "秒后可重发");
+                    $.cookie("captchaEmailPwd", count, {path: '/', expires: (1 / 86400) * count});
+                } else {
+                    clearInterval(resend);
+                    btn.val("获取验证码").removeAttr('disabled style')
+                }
+            }, 1000);
+            btn.attr('disabled', true).css('cursor', 'not-allowed');
+        }
+
+
+        //通过验证提交修改
+        document.querySelector('#updatePwd').onclick = function () {
+            var oldPwd = $('#oldpwd').val();
+            var newPwd = $('#newpwd').val();
+            var new2Pwd = $('#newrequiredpwd').val();
+            var email = $('#bindingEamil').val();
+            var identify = $('#identifyPwd').val();
+
+            console.log("新密码1：" + newPwd + ",新密码2：" + new2Pwd);
+
+            //基本验证
+            if (oldPwd == '' || oldPwd == 'undefined') {
+                layer.alert("请填写原密码!");
+                return;
+            }
+            if (newPwd == '' || newPwd == 'undefined') {
+                layer.alert("请填写新密码！");
+                return;
+            }
+            if (!/^.{6,}$/.test(newPwd)) {
+                layer.alert("密码至少6位，请重新输入!");
+                return;
+            }
+            if(oldPwd === newPwd){
+                layer.alert("新密码不能和原密码相同，请重新输入！");
+                return;
+            }
+            if (new2Pwd == '' || new2Pwd == 'undefined') {
+                layer.alert("请输入确认密码!")
+                return;
+            }
+            if (newPwd != new2Pwd) {
+                layer.alert("两次输入的新密码不一致，请重新输入!");
+                return;
+            }
+            if (email == '' || email == 'undefined') {
+                layer.alert("请先填写邮箱！");
+                return;
+            }
+            //验证邮箱格式是否正确
+            if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(email)) {
+                layer.alert("邮箱格式错误，请输入正确的邮箱!")
+                return;
+            }
+            //验证是否是当前登录用户的绑定邮箱
+            if (!(userEmail == email)) {
+                layer.alert("此邮箱非当前登录用户的绑定邮箱，请重新输入!")
+                return;
+            }
+            if (identify == '' || identify == 'undefined') {
+                layer.alert("验证码不能为空！")
+                return;
+            }
+
+            // 通过验证，提交表单
+            $.ajax({
+                url: '/User/updatePwd',
+                data: {
+                    userName: userName,
+                    userEmail: email,
+                    passWord: oldPwd,
+                    identify: identify,
+                    newPwd: newPwd
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert('成功修改密码', {icon: 1}, function () {
+                            // location.href="/exit";
+                            window.parent.location.reload();
+                        });
+                        // layer.alert('成功修改密码',{icon:1});
+                        console.log('修改密码成功!');
+                    } else {
+                        console.log(result.code + "," + result.msg)
+                        layer.alert(result.msg)
+                    }
+                }
+            });
+        }
+
+    })
+</script>
+</body>
+</html>

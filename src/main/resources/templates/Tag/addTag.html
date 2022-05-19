@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+</head>
+<body class="childrenBody">
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a href="">标签管理</a>
+              <a>
+                <cite>添加标签</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+
+<div class="layui-card-body">
+    <div class="layui-panel">
+        <form class="layui-form" action="" style="padding: 20px;background-color: #fff">
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签名称:</label>
+                <div class="layui-input-inline">
+                    <!--                <input type="text" name="title" lay-verify="title"-->
+                    <!--                       autocomplete="off" placeholder="请输入类别名称" class="layui-input"-->
+                    <!--                       id="category_name" name="category_name">-->
+                    <input type="text" id="tag_name" name="tag_name" required
+                           placeholder="请输入标签名称" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <div class="layui-btn" lay-submit="" lay-filter="add">立即提交</div>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        var userName = [[${session.user.userName}]];
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            //提交验证
+            if ($('#tag_name').val() == "") {
+                layer.msg("类别不能输入为空！", {
+                    icon: 2
+                });
+                return false;
+            } else {
+
+                var tag_name = $('#tag_name').val().trim().replace(/\ +/g, "");
+                $.ajax({
+                    url: "/Tag/insertTag",
+                    type: "POST",
+                    data: {
+                        tagName: tag_name,
+                        userName: userName
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.code == 200) {
+                            // console.log("添加成功");
+                            layer.alert('添加标签成功', {icon: 1}, function () {
+                                location.reload();
+                            });
+                        } else {
+                            // console.log('返回code：'+result.code)
+                            layer.alert(result.msg)
+                        }
+                    }
+                });
+            }
+            //清空表单
+            $("#tag_name").val("");
+        });
+
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.takuhome.back.dao.SysUserDao">
+
+    <resultMap id="SysUserMap" type="com.takuhome.back.entity.SysUser">
+        <result property="admId" column="adm_id"/>
+        <result property="userName" column="adm_username"/>
+        <result property="passWord" column="adm_password"/>
+        <result property="nickName" column="adm_nickname"/>
+        <result property="headImg" column="adm_headimg"/>
+        <result property="userEmail" column="adm_email"/>
+        <result property="createTime" column="adm_createTime"/>
+        <result property="updateTime" column="adm_updateTime"/>
+        <result property="userStatus" column="adm_status"/>
+        <result property="userDesc" column="adm_desc"/>
+    </resultMap>
+
+    <sql id="Base_result">
+        adm_id
+        ,adm_username,adm_password,adm_nickname,adm_headimg,
+        adm_email,adm_createTime,adm_updateTime,adm_status,adm_desc
+    </sql>
+
+    <!--    1.登录验证-->
+    <select id="getUserByUserName" resultMap="SysUserMap">
+        select
+        <include refid="Base_result"/>
+        from taku_admin where adm_username =#{userName}
+    </select>
+
+    <!--    2.新增用户-->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="admId"
+            parameterType="com.takuhome.back.entity.SysUser">
+        insert into taku_admin(<include refid="Base_result"/>) values(null,#{userName},
+        #{passWord},#{nickName},#{headImg},#{userEmail},now(),now(),#{userStatus},#{userDesc})
+    </insert>
+
+    <!--    3.查询重复-->
+    <select id="getUserByRepeat" resultMap="SysUserMap">
+        select
+        <include refid="Base_result"/>
+        from taku_admin where
+        adm_username =#{userName} or adm_email =#{userEmail}
+    </select>
+
+    <!--    4.修改用户信息-->
+    <update id="updateUserInfo" parameterType="com.takuhome.back.entity.Category">
+        update taku_admin
+        <set>
+            <if test="admId != null">
+                adm_id=#{admId},
+            </if>
+            <if test="passWord != null">
+                adm_password=#{passWord},
+            </if>
+            <if test="nickName != null">
+                adm_nickname=#{nickName},
+            </if>
+            <if test="headImg != null">
+                adm_headimg=#{headImg},
+            </if>
+            <if test="userEmail != null">
+                adm_email=#{userEmail},
+            </if>
+            <if test="createTime != null">
+                adm_createTime=#{createTime},
+            </if>
+            <if test="updateTime != null">
+                adm_updateTime=now(),
+            </if>
+            <if test="userStatus != null">
+                adm_status=#{userStatus},
+            </if>
+            <if test="userDesc != null">
+                adm_desc=#{userDesc}
+            </if>
+        </set>
+        where adm_username=#{userName}
+    </update>
+
+    <!--    5.昵称查重-->
+    <select id="getUserByNickName" resultMap="SysUserMap">
+        select
+        <include refid="Base_result"/>
+        from taku_admin where adm_nickname =#{nickName}
+    </select>
+
+    <!--    6.修改密码时的验证-->
+    <select id="updateUserByCheck" parameterType="string" resultMap="SysUserMap">
+        select
+        <include refid="Base_result"/>
+        from taku_admin where adm_username =#{userName}
+    </select>
+
+    <!--    7.查询所有用户(管理员用)-->
+    <select id="getAllUserByManagement" resultMap="SysUserMap">
+        select
+        <include refid="Base_result"/>
+        from taku_admin where adm_status =1 or adm_status =0 ORDER BY adm_id limit #{pageNum},#{limit}
+    </select>
+    <!--    总记录数-->
+    <select id="countAllUser" resultType="java.lang.Long">
+        select count(*)
+        from taku_admin
+    </select>
+
+    <!--    8.验证当前登录用户权限-->
+    <select id="getUserStatus" resultType="integer" parameterType="string">
+        select adm_status
+        from taku_admin
+        where adm_username = #{userName}
+    </select>
+
+    <!--    9.根据用户id查询用户-->
+    <select id="getUserById" resultMap="SysUserMap">
+        select <include refid="Base_result"></include>
+        from taku_admin where adm_id =#{admId}
+    </select>
+    
+    <!--    10.根据邮箱查询用户-->
+    <select id="getUserByEmail" resultMap="SysUserMap">
+        select <include refid="Base_result"/> from taku_admin where adm_email=#{userEmail}
+    </select>
+</mapper>

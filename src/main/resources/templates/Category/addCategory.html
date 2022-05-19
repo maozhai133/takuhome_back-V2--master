@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+    <link rel="stylesheet" th:href="@{/xadmin/lib/layui/css/layui.css}"/>
+</head>
+<body class="childrenBody">
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a href="">分类管理</a>
+              <a>
+                <cite>添加分类</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+<!--添加表单-->
+<div class="layui-card-body">
+    <div class="layui-panel">
+        <form class="layui-form" action="" style="padding: 20px;background-color: #fff">
+            <div class="layui-form-item">
+                <label class="layui-form-label">父类别名称:</label>
+                <div class="layui-input-inline">
+                    <select name="parentCategory" lay-verify="" id="pid">
+                        <option id="0">请选择父类别:可不选</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别名称:</label>
+                <div class="layui-input-inline">
+                    <!--                <input type="text" name="title" lay-verify="title"-->
+                    <!--                       autocomplete="off" placeholder="请输入类别名称" class="layui-input"-->
+                    <!--                       id="category_name" name="category_name">-->
+                    <input type="text" id="category_name" name="category_name" required
+                           placeholder="请输入类别名称" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <div class="layui-btn" lay-submit="" lay-filter="add">立即提交</div>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--提示说明-->
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs6 layui-col-md12">
+            <div class="layui-panel">
+                <div style="padding: 30px;">
+                    <blockquote class="layui-elem-quote">
+                        添加分类说明:
+                        <br>
+                        Ⅰ 如果父类名为:<span th:style="'color:red'">可不选</span>,表示当前所新增的分类为父级分类
+                        <br>
+                        Ⅱ 如果要让当前所增加的分类为二级分类，就必须选择除可不选以外的一个分类作为父级分类
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+        //用户名
+        var userName = [[${session.user.userName}]];
+
+        //    下拉选项数据绑定
+        $.ajax({
+            url: "/Category/getList",
+            type: "POST",
+            dataType: "json",
+            data: {
+                userName: userName
+            },
+            success: function (result) {
+                // console.log('数据为:'+result.datas);
+                // console.log('长度:'+result.datas.length);
+                //将传过来的对象转换为json字符串
+                let obj = JSON.stringify(result.datas);
+                //将json字符串转换为json对象
+                var mydata = eval('(' + obj + ')');
+                for (var i = 0; i < mydata.length; i++) {
+                    if (mydata[i].parentId == 0) {
+                        var option = "<option id=" + mydata[i].categoryId + ">"
+                            + mydata[i].categoryName + "</option>";
+                        $("#pid").append(option);
+                        layui.form.render('select');
+                    }
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            //提交验证
+            if ($('#category_name').val() == "") {
+                layer.msg("类别不能输入为空！", {
+                    icon: 2
+                });
+                return false;
+            } else {
+                var str = $('#pid :selected').attr("id");
+                var category_name = $('#category_name').val().trim().replace(/\ +/g, "");
+                $.ajax({
+                    url: "/Category/insertCategory",
+                    type: "POST",
+                    data: {
+                        parent_id: str,
+                        category_name: category_name,
+                        userName: userName
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.code == 200) {
+                            // console.log("添加成功");
+                            layer.alert('添加分类成功', {icon: 1}, function () {
+                                location.reload();
+                            });
+                        } else {
+                            // console.log('返回code：'+result.code)
+                            layer.alert(result.msg)
+                        }
+                    }
+                });
+            }
+            //清空表单
+            $("#category_name").val("");
+        });
+
+    });
+
+</script>
+
+
+</body>
+</html>

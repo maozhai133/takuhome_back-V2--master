@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+</head>
+<body class="childrenBody">
+<div class="x-nav">
+                <span class="layui-breadcrumb">
+                  <a href="">博文管理</a>
+                  <a>
+                    <cite>博文列表</cite></a>
+                </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+
+<div class="layui-card-body">
+    <div class="layui-card-header" style="display: inline">
+        <!--批量删除-->
+        <button class="layui-btn layui-btn-danger" onclick="delAll()" permission=""><i
+                class="layui-icon"></i>批量删除
+        </button>
+    </div>
+    <!--搜索-->
+    <form class="layui-form  layui-col-space5" style="display: inline">
+        <div class="layui-inline layui-show-xs-block">
+            <input type="text" name="articleTitle" placeholder="请输入博文标题名" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-inline layui-show-xs-block">
+            <button class="layui-btn" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+        </div>
+    </form>
+    <!--分类列表显示-->
+    <div class="layui-card-body ">
+        <table class="layui-hide" id="table" lay-filter="member"></table>
+    </div>
+    <!--    工具栏-->
+    <div class="layui-card-body ">
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit" permission="">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" permission="">删除</a>
+        </script>
+    </div>
+</div>
+
+</body>
+
+<script th:inline="javascript">
+    layui.use(['table'], function () {
+        var table = layui.table;
+        form = layui.form;
+
+        //用户名
+        var userName = [[${session.user.userName}]];
+        //数据绑定
+        table.render({
+            elem: '#table'
+            , url: '/Article/articleList'//数据接口
+            // ,toolbar:'#toolbarDemo'//开启头部工具栏，并为其绑定左侧模板
+            , page: true //开启分页
+            , where:{
+                "userName":userName
+            }
+            , id: 'articles'
+            , even: false//隔行换色
+            , response: {
+                countName: 'count', //规定数据总数的字段名称，默认：count
+                dataName: 'datas' //规定数据列表的字段名称，默认：data
+            }
+            , cols: [
+                [//表头
+                    {
+                        type: 'checkbox',
+                        fixed: 'left'
+                    },
+                    {
+                        field: 'number'
+                        , type: 'numbers'
+                        // ,sort: true
+                        ,title: '序号'
+                        ,width: 60
+                        ,fixed: 'left'
+                        ,align: 'center'
+                    },
+                    {
+                        field: 'articleId',
+                        title: 'ID',
+                        align: 'center',
+                        // sort: true,
+                        // width:60
+                        hide:true
+                    },
+                    {
+                        field: 'articleTitle',
+                        title: '标题',
+                        align: 'center',
+                        sort: true,
+                        width: 158
+                    },
+                    {
+                        field: 'articleCreateTime',
+                        title: '发布时间',
+                        align: 'center',
+                        sort:true,
+                        width:165
+                    },
+                    {
+                        field: 'articleViews',
+                        title: '浏览数',
+                        align: 'center',
+                        sort:true,
+                        width:105
+                    },
+                    {
+                        field: 'articleLikeNum',
+                        title: '点赞数',
+                        align: 'center',
+                        sort:true,
+                        width:105
+                    },
+                    {
+                        field: 'categoryName',
+                        title: '分类名',
+                        align: 'center',
+                        width:100
+                    },
+                    {
+                        field: 'articleIsTop',
+                        title: '是否置顶',
+                        align: 'center',
+                        sort: true,
+                        width:114,
+                        templet:function(d) {
+                            return d.articleIsTop==0?'否':'是';
+                        }
+                    },
+                    {
+                    title: '操作',
+                    toolbar: '#barDemo',
+                    }
+                ]
+            ],
+            done: function () {
+            }
+        });
+
+        //监听工具条
+        table.on('tool(member)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确认删除吗?', function (index) {
+                    $.ajax({
+                        url: "/Article/delArticleById",
+                        type: "DELETE",
+                        data: {
+                            articleId: data.articleId,
+                            userName:userName
+                        },
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.code == 200) {
+                                layer.alert("删除成功", {icon: 1}, function (index1) {
+                                    layer.close(index1);
+                                    location.reload()
+                                });
+                            } else {
+                                layer.alert(result.msg,{icon:2});
+                            }
+                        },
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                var  index = layer.open({
+                    title: ["编辑博文", "text-align:center"],
+                    type: 2,
+                    offset: "auto",//位置
+                    area: ["95%", "95%"],//大小
+                    content: ['/Article/edit/?articleId=' + data.articleId +'&userName='+userName],
+                    anim: 1,
+                    end: function () {
+                        table.reload('table');
+                    }
+                });
+                // layer.full(index);
+            }
+        });
+
+        //批量删除
+        delAll = function (){
+            var checkStatus = table.checkStatus('articles');
+            if(checkStatus.data.length == 0){
+                parent.layer.msg('请先选择要删除的博文!',{icon:2});
+                return;
+            }
+            var ids = "";
+            for (var i = 0;i<checkStatus.data.length;i++){
+                ids += checkStatus.data[i].articleId + ",";
+            }
+            console.log(ids);
+            layer.confirm('确定要删除吗?', function (index) {
+                $.post('/Article/delArticleByCheck',
+                    {'ids': ids,'userName':userName},
+                    function (data) {
+                        layer.closeAll('loading');
+                        if (data.code == 200) {
+                            layer.alert("批量删除成功！", {icon: 1}, function (index1) {
+                                layer.close(index1);
+                                table.reload('articles');
+                            });
+                        } else {
+                            layer.alert("遇到错误，删除失败", {icon: 2}, function (index1) {
+                                layer.close(index1);
+                            });
+                        }
+                    }
+                )
+            });
+        };
+
+        //搜索功能
+        form.on('submit(search)',function (data) {
+            var articleTitle = data.field.articleTitle;
+            console.log(articleTitle);
+            //数据绑定
+            table.render({
+                elem: '#table'
+                , url: '/Article/findAllArticleByTitle'
+                , type: "GET"
+                , page: true //开启分页
+                , where: {
+                    "articleTitle": articleTitle,
+                    "userName":userName
+                }
+                , response: {
+                    countName: 'count', //规定数据总数的字段名称，默认：count
+                    dataName: 'datas' //规定数据列表的字段名称，默认：data
+                }
+                , cols: [
+                    [//表头
+                        {
+                            type: 'checkbox',
+                            fixed: 'left'
+                        },
+                        {
+                            field: 'number'
+                            , type: 'numbers'
+                            // ,sort: true
+                            ,title: '序号'
+                            ,width: 60
+                            ,fixed: 'left'
+                            ,align: 'center'
+                        },
+                        {
+                            field: 'articleId',
+                            title: 'ID',
+                            align: 'center',
+                            // sort: true,
+                            // width:60
+                            hide:true
+                        },
+                        {
+                            field: 'articleTitle',
+                            title: '标题',
+                            align: 'center',
+                            sort: true,
+                            width: 158
+                        },
+                        {
+                            field: 'articleCreateTime',
+                            title: '发布时间',
+                            align: 'center',
+                            sort:true,
+                            width:152
+                        },
+                        {
+                            field: 'articleViews',
+                            title: '浏览数',
+                            align: 'center',
+                            sort:true,
+                            width:105
+                        },
+                        {
+                            field: 'articleLikeNum',
+                            title: '点赞数',
+                            align: 'center',
+                            sort:true,
+                            width:105
+                        },
+                        {
+                            field: 'categoryName',
+                            title: '分类名',
+                            align: 'center',
+                            width:100
+                        },
+                        {
+                            field: 'articleIsTop',
+                            title: '是否置顶',
+                            align: 'center',
+                            sort: true,
+                            width:114,
+                            templet:function(d) {
+                                return d.articleIsTop==0?'否':'是';
+                            }
+                        },
+                        {
+                            title: '操作',
+                            toolbar: '#barDemo',
+                        }
+                    ]
+                ],
+                done: function () {
+                }
+            });
+            return false
+        });
+
+    })
+</script>
+</html>

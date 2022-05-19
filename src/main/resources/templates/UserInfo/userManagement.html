@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+</head>
+<body class="childrenBody">
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a href="">用户管理</a>
+              <a>
+                <cite>用户列表</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+
+<div class="layui-card-body">
+    <div class="layui-card-header" style="display: inline">
+        <!--批量删除-->
+        <!--        <button class="layui-btn layui-btn-danger" onclick="delAll()" permission=""><i-->
+        <!--                class="layui-icon"></i>批量删除-->
+        <!--        </button>-->
+    </div>
+    <!--搜索-->
+    <form class="layui-form  layui-col-space5" style="display: inline">
+        <div class="layui-inline layui-show-xs-block">
+            <input type="text" name="articleTitle" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-inline layui-show-xs-block">
+            <button class="layui-btn" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+        </div>
+    </form>
+    <!--分类列表显示-->
+    <div class="layui-card-body ">
+        <table class="layui-hide" id="table" lay-filter="member"></table>
+    </div>
+    <!--    工具栏-->
+    <div class="layui-card-body ">
+        <script type="text/html" id="barDemo">
+<!--            <a class="layui-btn layui-btn-xs" lay-event="edit" permission="">修改</a>-->
+<!--            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="forbidden" permission="">停用</a>-->
+        </script>
+    </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+    layui.use(['table'], function () {
+        var table = layui.table;
+        form = layui.form;
+
+        //用户名
+        var userName = [[${session.user.userName}]];
+        table.render({
+            elem: '#table'
+            , url: '/User/allUserList'//数据接口
+            // ,toolbar:'#toolbarDemo'//开启头部工具栏，并为其绑定左侧模板
+            , page: true //开启分页
+            , where:{
+                "username":userName
+            }
+            , id: 'articles'
+            , even: false//隔行换色
+            , response: {
+                countName: 'count', //规定数据总数的字段名称，默认：count
+                dataName: 'datas' //规定数据列表的字段名称，默认：data
+            }
+            ,toolbar:false
+            , cols: [
+                [
+                    {
+                        type: 'checkbox',
+                        fixed: 'left'
+                    },
+                    {
+                        field: 'number'
+                        , type: 'numbers'
+                        // ,sort: true
+                        , title: '序号'
+                        , width: 60
+                        , fixed: 'left'
+                        , align: 'center'
+                    },
+                    {
+                        field: 'admId',
+                        title: 'ID',
+                        align: 'center',
+                        hide: true
+                    },
+                    {
+                        field: 'userName',
+                        title: '用户名',
+                        align: 'center',
+                        sort: true,
+                        width: 158
+                    },
+                    {
+                        field: 'nickName',
+                        title: '用户昵称',
+                        align: 'center',
+                        sort: true,
+                        width: 165
+                    },
+                    {
+                        field: 'userEmail',
+                        title: '用户邮箱',
+                        align: 'center',
+                        sort: true,
+                        width: 200
+                    },
+                    {
+                        field: 'createTime',
+                        title: '注册时间',
+                        align: 'center',
+                        sort: true,
+                        width: 165
+                    },
+                    {
+                        field: 'updateTime',
+                        title: '更新时间',
+                        align: 'center',
+                        sort: true,
+                        width: 165
+                    },
+                    {
+                        field: 'userStatus',
+                        title: '是否启用',
+                        align: 'center',
+                        sort: true,
+                        width:114,
+                        templet:function(d) {
+                            return d.userStatus==0?'否':'是'
+                        }
+                    },
+                    {
+                        title: '操作',
+                        // toolbar: '#barDemo',
+                        templet:function (d){
+                            let htmls = '<a class="layui-btn layui-btn-xs" lay-event="edit" permission="">重置信息</a>' +
+                                '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="forbidden" permission="">停用</a>'
+                            if(d.userStatus==0){
+                                htmls = '<a class="layui-btn layui-btn-xs" lay-event="edit" permission="">重置信息</a>' +
+                                    '<a class="layui-btn layui-btn layui-btn-normal layui-btn-xs" lay-event="restart" permission="">启用</a>'
+                            }
+                            return htmls
+                        }
+                    }
+                ]
+            ],
+            done: function () {
+            }
+        })
+
+        //监听工具条
+        table.on('tool(member)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'forbidden') {
+                layer.confirm('确认停用当前用户吗?', function (index) {
+                    $.ajax({
+                        url: "/adminUser/blockUser",
+                        type: "POST",
+                        data: {
+                            admId: data.admId,
+                            userName: userName,
+
+                        },
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.code == 200) {
+                                layer.alert("已停用当前用户", {icon: 1}, function (index1) {
+                                    layer.close(index1);
+                                    location.reload()
+                                });
+                            } else {
+                                layer.alert(result.msg, {icon: 2});
+                            }
+                        },
+                    });
+                });
+            } else if(obj.event === 'restart'){
+                layer.confirm('确认启用当前用户吗?', function (index) {
+                    $.ajax({
+                        url: "/adminUser/restartUser",
+                        type: "POST",
+                        data: {
+                            admId: data.admId,
+                            userName: userName
+                        },
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.code == 200) {
+                                layer.alert("已成功启用当前用户", {icon: 1}, function (index1) {
+                                    layer.close(index1);
+                                    location.reload()
+                                });
+                            } else {
+                                layer.alert(result.msg, {icon: 2});
+                            }
+                        },
+                    });
+                });
+            }else if (obj.event === 'edit') {
+                layer.open({
+                    title: ["重置用户信息", "text-align:center"],
+                    type: 2,
+                    offset: 'auto',//位置
+                    area: ["520px", "450px"],//大小
+                    content: ['/adminUser/adminEmailVerify?userId='+data.admId],
+                    anim: 1,
+                    end: function () {
+                        table.reload('table');
+                    }
+                });
+            }
+        });
+
+    })
+</script>
+
+
+
+
+</html>

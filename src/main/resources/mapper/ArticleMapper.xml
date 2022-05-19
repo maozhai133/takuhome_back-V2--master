@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.takuhome.back.dao.ArticleDao">
+
+    <resultMap id="ArticleMap" type="com.takuhome.back.entity.Article">
+        <result property="articleId" column="article_id"/>
+        <result property="articleContent" column="article_content"/>
+        <result property="articleLikeNum" column="article_likenum"/>
+        <result property="articleViews" column="article_views"/>
+        <result property="articleImage" column="article_image"/>
+        <result property="articleTitle" column="article_title"/>
+        <result property="articleCreateTime" column="article_createtime"/>
+        <result property="articleIsTop" column="article_isTop"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="articleDesc" column="article_desc"/>
+        <result property="countComment" column="count_comment"/>
+        <result property="articleTag1" column="article_tag1"/>
+        <result property="articleTag2" column="article_tag2"/>
+        <result property="articleTag3" column="article_tag3"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="userName" column="adm_username"/>
+    </resultMap>
+
+    <sql id="Base_result">
+        article_id
+        ,article_content,article_likenum,article_views,article_image,article_title
+        ,article_createtime,article_isTop,category_id,article_desc,count_comment,article_tag1,
+        article_tag2,article_tag3,category_name,adm_username
+    </sql>
+
+    <!--    1.添加博文-->
+    <insert id="addArticle" parameterType="com.takuhome.back.entity.Article">
+        insert into taku_article( article_content, article_likenum, article_views, article_image, article_title
+                                , article_createtime, article_isTop, category_id, article_desc, count_comment
+                                , article_tag1, article_tag2, article_tag3, category_name
+                                , adm_username)
+        values ( #{articleContent}
+               , #{articleLikeNum}, #{articleViews}, #{articleImage}, #{articleTitle}, #{articleCreateTime}
+               , #{articleIsTop}, #{categoryId}, #{articleDesc}, #{countComment}, #{articleTag1}, #{articleTag2}
+               , #{articleTag3}, #{categoryName},#{userName})
+    </insert>
+
+    <!--    2.博文标题查重验证-->
+    <select id="getArticleByTitle" resultType="com.takuhome.back.entity.Article" parameterType="string">
+        select
+        <include refid="Base_result"/>
+        from taku_article where article_title =#{articleTitle} and adm_username=#{userName}
+    </select>
+
+    <!--    3.查询所有博文并分页-->
+    <select id="getAllArticle" resultType="com.takuhome.back.entity.Article">
+        select
+        <include refid="Base_result"/>
+        from taku_article where adm_username=#{userName} order by article_id limit #{pageNum},#{limit}
+    </select>
+    <!--    总记录数-->
+    <select id="countAllArticle" resultType="java.lang.Long">
+        select count(*)
+        from taku_article where adm_username=#{userName}
+    </select>
+
+    <!--    4.根据id查询博文-->
+    <select id="getArticleById" resultType="com.takuhome.back.entity.Article">
+        select
+        <include refid="Base_result"/>
+        from taku_article where article_id =#{articleId} and adm_username=#{userName}
+    </select>
+
+    <!--    5.模糊查询并分页-->
+    <select id="getAllArticleByTitle" resultType="com.takuhome.back.entity.Article">
+        select
+        <include refid="Base_result"/>
+        from taku_article where adm_username=#{userName} and article_title like '%${articleTitle}%' limit #{pageNum},#{limit}
+    </select>
+    <select id="countAllArticleByTitle" resultType="java.lang.Long" parameterType="string">
+        select count(*)
+        from taku_article
+        where adm_username=#{userName} and article_title like '%${articleTitle}%'
+    </select>
+
+    <!--    6.单个删除博文-->
+    <delete id="deleteArticleById" parameterType="com.takuhome.back.entity.Article">
+        delete
+        from taku_article
+        where article_id = #{articleId} and adm_username=#{userName}
+    </delete>
+
+<!--        7.修改博文-->
+    <update id="updateArticle" parameterType="com.takuhome.back.entity.Article">
+        update taku_article
+        <set>
+            <if test="articleContent!=null">
+                article_content = #{articleContent},
+            </if>
+            <if test="articleLikeNum!=null">
+                article_likenum = #{articleLikeNum},
+            </if>
+            <if test="articleViews!=null">
+                article_views = #{articleViews},
+            </if>
+            <if test="articleImage!=null">
+                article_image = #{articleImage},
+            </if>
+            <if test="articleTitle!=null">
+                article_title = #{articleTitle},
+            </if>
+            <if test="articleCreateTime !=null">
+                article_createtime = #{articleCreateTime},
+            </if>
+            <if test="articleIsTop!=null">
+                article_isTop = #{articleIsTop},
+            </if>
+            <if test="categoryId!=null">
+                category_id = #{categoryId},
+            </if>
+            <if test="articleDesc!=null">
+                article_desc = #{articleDesc},
+            </if>
+            <if test="countComment!=null">
+                count_comment = #{countComment},
+            </if>
+            <if test="articleTag1!=null">
+                article_tag1 = #{articleTag1},
+            </if>
+            <if test="articleTag2!=null">
+                article_tag2 = #{articleTag2},
+            </if>
+            <if test="articleTag3!=null">
+                article_tag3 = #{articleTag3},
+            </if>
+            <if test="categoryName!=null">
+                category_name = #{categoryName}
+            </if>
+        </set>
+        where article_id = #{articleId} and adm_username=#{userName}
+    </update>
+
+<!--    8.根据分类id查询博文(删除分类时的检测)-->
+    <select id="checkCategoryById" resultType="com.takuhome.back.entity.Article" parameterType="com.takuhome.back.entity.Article">
+        select<include refid="Base_result"/> from taku_article where category_id=#{categoryId} and adm_username=#{userName}
+    </select>
+
+<!--    9.根据标签id查询博文(删除标签时的检测)-->
+    <select id="checkTagById" resultType="com.takuhome.back.entity.Article" parameterType="integer">
+        select<include refid="Base_result"/> from taku_article where article_tag1=#{tagId} or article_tag2=#{tagId} or article_tag3=#{tagId}
+    </select>
+
+
+</mapper>

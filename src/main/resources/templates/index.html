@@ -1,0 +1,210 @@
+<!doctype html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+</head>
+<body class="index">
+<!-- 顶部开始 -->
+<div class="container" th:style="'background: url(/imgsrc/nav1.jpg)'">
+    <div class="logo">
+        <a href="">【博客后台管理】</a></div>
+    <div class="left_open">
+        <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
+    </div>
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <img th:src="${session.user.headImg}" class="layui-circle picture" id="picture" width="30px"
+                 height="30px">
+        </li>
+        <li class="layui-nav-item">
+            <a href="#">
+                <span class="x-red" th:text="${session.user.nickName}"/>
+            </a>
+            <dl class="layui-nav-child">
+                <!-- 二级菜单 -->
+                <dd>
+                    <a onclick="xadmin.add_tab('个人信息','api/getPage?pageName=UserInfo/info')">个人信息</a>
+                </dd>
+                <dd>
+                    <a onclick="xadmin.add_tab('个人信息','api/getPage?pageName=UserInfo/info')">修改密码</a>
+                </dd>
+                <dd>
+                    <a href="/exit">退出</a>
+                </dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item to-index">
+            <a href="/">前台首页</a>
+        </li>
+    </ul>
+</div>
+<!-- 顶部结束 -->
+<!-- 中部开始 -->
+<!-- 左侧菜单开始 -->
+<div class="left-nav">
+    <div id="side-nav">
+        <ul id="nav">
+            <!--            博文-->
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="博文管理">&#xe705;</i>
+                    <cite>博文管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a onclick="xadmin.add_tab('博文列表','api/getPage?pageName=Article/listArticle')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>博文列表</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('添加博文','api/getPage?pageName=Article/addArticle')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>添加博文</cite></a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--            评论-->
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="评论管理">&#xe69b;</i>
+                    <cite>评论管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a onclick="xadmin.add_tab('评论列表','')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>评论列表</cite></a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--            分类-->
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="分类管理">&#xe6b5;</i>
+                    <cite>分类管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a onclick="xadmin.add_tab('分类列表','api/getPage?pageName=Category/listCategory')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>分类列表</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('添加分类','api/getPage?pageName=Category/addCategory')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>添加分类</cite></a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--            标签-->
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="标签管理">&#xe6c5;</i>
+                    <cite>标签管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a onclick="xadmin.add_tab('标签列表','api/getPage?pageName=Tag/listTag')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>标签列表</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('添加标签','api/getPage?pageName=Tag/addTag')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>添加标签</cite></a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--            个人信息管理-->
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="个人管理">&#xe6b8;</i>
+                    <cite>个人管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a onclick="xadmin.add_tab('个人信息','api/getPage?pageName=UserInfo/info')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>个人信息</cite></a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--            用户账户管理(超级管理员权限)-->
+            <li id="userStatus" style="display: none">
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li layui-icon layui-icon-group" lay-tips="用户管理"></i>
+                    <cite>用户管理</cite>
+                    <i class="iconfont nav_right">>&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <!--                        <a onclick="xadmin.add_tab('用户管理','api/getPage?pageName=UserInfo/UserManagement')">-->
+                        <a id="openUserList">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>用户管理</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</div>
+<!-- <div class="x-slide_left"></div> -->
+<!-- 左侧菜单结束 -->
+<!-- 右侧主体开始 -->
+<div class="page-content">
+    <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+        <ul class="layui-tab-title">
+            <li class="home">
+                <i class="layui-icon">&#xe68e;</i>我的首页
+            </li>
+        </ul>
+        <div class="layui-unselect layui-form-select layui-form-selected" id="tab_right">
+            <dl>
+                <dd data-type="this">关闭当前</dd>
+                <dd data-type="other">关闭其它</dd>
+                <dd data-type="all">关闭全部</dd>
+            </dl>
+        </div>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src='api/getPage?pageName=welcome' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+            </div>
+        </div>
+        <div id="tab_show"></div>
+    </div>
+</div>
+<div class="page-content-bg"></div>
+<style id="theme_style"></style>
+
+
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        var userStatus = [[${session.user.userStatus}]];//用户状态
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+        if (userStatus == 2) {
+            $('#userStatus').css({display: 'block'});
+        }
+
+        $('#openUserList').click(function () {
+            if ([[${session.user.userStatus}]] == 2) {
+                xadmin.add_tab('用户管理', 'api/getPage?pageName=UserInfo/userManagement');
+            }
+            else{
+                layer.alert("你目前的权限无法进入此项管理！")
+            }
+        })
+    })
+
+</script>
+</body>
+</html>

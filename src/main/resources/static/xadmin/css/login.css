@@ -6,7 +6,7 @@
 */
 .login-bg{
     /*background: #eeeeee url() 0 0 no-repeat;*/
-     background:url(../images/bg.png) no-repeat center;
+     background:url("../images/bg.png") no-repeat center;
     background-size: cover;
     overflow: hidden;
 }

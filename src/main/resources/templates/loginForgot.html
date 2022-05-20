@@ -66,8 +66,141 @@
     </div>
 </div>
 
-<script >
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
 
+        //发送邮箱验证码
+        document.querySelector('#sendIdentify').onclick = function () {
+            //防刷新:检测是否存在cookie
+            if ($.cookie("captchaEmailPwd")) {// 判断cookie存不存在
+                var count = $.cookie("captchaEmail"); // 从cookie中取出count
+                var btn = $('#sendIdentify');
+                btn.text(count + '秒后可重发').attr('disabled', true).css('cursor', 'not-allowed');
+                var resend = setInterval(function () {
+                    count--;
+                    if (count > 0) {
+                        btn.val(count + '秒后可重发').attr('disabled', true).css('cursor', 'not-allowed'); //把count保存到cookie中
+                        $.cookie("captchaEmailPwd", count, {path: '/', expires: (1 / 86400) * count});
+                    } else {
+                        clearInterval(resend);
+                        btn.val("获取验证码").removeClass('disabled').removeAttr('disabled style');
+                    }
+                }, 1000);
+            }
+
+            //检查邮箱是否填写
+            var email = $('#bindingEamil').val();
+            if (email == '' || email == 'undefined') {
+                layer.alert("请先填写邮箱！");
+                return;
+            }
+            //验证邮箱格式是否正确
+            if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(email)) {
+                layer.alert("邮箱格式错误，请输入正确的邮箱!")
+                return;
+            }
+
+            // console.log('邮箱:'+email);
+            $.ajax({
+                url: '/resetPassword/sendEmail',
+                data: {
+                    email: email,
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (results) {
+                    if (results.code == 200) {
+                        layer.alert('验证码已发送,请及时查看你的邮箱!');
+                    } else {
+                        layer.alert('发送失败，请稍后再试！');
+                    }
+                }
+            });
+            //改变按钮状态
+            var btn = $('#sendIdentify');
+            var count = 60;
+            var resend = setInterval(function () {
+                count--;
+                if (count > 0) {
+                    btn.val(count + "秒后可重发");
+                    $.cookie("captchaEmailPwd", count, {path: '/', expires: (1 / 86400) * count});
+                } else {
+                    clearInterval(resend);
+                    btn.val("获取验证码").removeAttr('disabled style')
+                }
+            }, 1000);
+            btn.attr('disabled', true).css('cursor', 'not-allowed');
+        }
+
+        document.querySelector('#updatePwd').onclick = function () {
+            var newPwd = $('#newpwd').val();
+            var new2Pwd = $('#newrequiredpwd').val();
+            var email = $('#bindingEamil').val();
+            var identify = $('#identifyPwd').val();
+
+            //基本验证
+            if (newPwd == '' || newPwd == 'undefined') {
+                layer.alert("请填写新密码！");
+                return;
+            }
+            if (!/^.{6,}$/.test(newPwd)) {
+                layer.alert("密码至少6位，请重新输入!");
+                return;
+            }
+            if (new2Pwd == '' || new2Pwd == 'undefined') {
+                layer.alert("请输入确认密码!")
+                return;
+            }
+            if (newPwd != new2Pwd) {
+                layer.alert("两次输入的新密码不一致，请重新输入!");
+                return;
+            }
+            if (email == '' || email == 'undefined') {
+                layer.alert("请先填写邮箱！");
+                return;
+            }
+            //验证邮箱格式是否正确
+            if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(email)) {
+                layer.alert("邮箱格式错误，请输入正确的邮箱!")
+                return;
+            }
+            if (identify == '' || identify == 'undefined') {
+                layer.alert("验证码不能为空！")
+                return;
+            }
+
+            // 通过验证，提交表单
+            $.ajax({
+                url: '/resetPassword/retrievePwd',
+                data: {
+                    userEmail: email,
+                    identify: identify,
+                    newPwd: newPwd
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert('成功修改密码', {icon: 1}, function () {
+                            // location.href="/exit";
+                            window.parent.location.reload();
+                        });
+                        // layer.alert('成功修改密码',{icon:1});
+                        console.log('修改密码成功!');
+                    } else {
+                        console.log(result.code + "," + result.msg)
+                        layer.alert(result.msg)
+                    }
+                }
+            });
+        }
+
+
+
+    })
 </script>
 
 </body>

@@ -62,6 +62,7 @@ public class RePasswordController {
     @ResponseBody
     public Results<SysUser> RetrievePwd(SysUser sysUser, String identify, String newPwd) {
 
+        System.out.println("调用保存修改密码");
         SysUser userByEmail = ISysUserService.getUserByEmail(sysUser.getUserEmail());
 
         //邮箱存在
@@ -124,19 +125,19 @@ public class RePasswordController {
      */
     @PostMapping(value = "/sendEmail")
     @ResponseBody
-    public Results getEmailCode(String email, String userName) {
+    public Results getEmailCode(String email) {
         System.out.println("调用发送邮箱验证码(修改密码时)");
 
-        //验证是否为当前登录用户的绑定邮箱
-        SysUser user = ISysUserService.updateUserByCheck(userName);
+        //验证邮箱是否存在
+        SysUser user = ISysUserService.getUserByEmail(email);
         if (!email.equals(user.getUserEmail())) {
-            return Results.failure(ResponseCode.EMAIL_ILLEGALITY.getCode(),
-                    ResponseCode.EMAIL_ILLEGALITY.getMessage());
+            return Results.failure(ResponseCode.EMAIL_ERROR.getCode(),
+                    ResponseCode.EMAIL_ERROR.getMessage());
         }
 
         String code = EmailVerify.VerifyCode(6);//随机生成6位数的验证码
         String subject = "博客系统";//标题
-        String message = "<h3>【博客系统】您正在进行修改密码操作，</h3><br/>您的验证码为:" +
+        String message = "<h3>【博客系统】您正在使用忘记密码进行修改密码操作，</h3><br/>您的验证码为:" +
                 "<span style='color:red'>" + code + "</span>,有效时间为<span style='color:red'>5</span>分钟(若不是本人操作，请及时修改密码)";
         //发送邮件
 

@@ -1,6 +1,7 @@
 package com.takuhome.back.dao;
 
 import com.takuhome.back.entity.Article;
+import com.takuhome.back.entity.ArticleCount;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -66,5 +67,13 @@ public interface ArticleDao {
     //8.根据分类id查询博文(删除分类时的检测)
     List<Article> checkCategoryById(@Param("categoryId")Integer categoryId,@Param("userName")String userName);
 
+    //9.根据标签id查询博文(删除标签时的检测)
     List<Article> checkTagById(@Param("tagId")Integer tagId);
+
+    //10.根据用户名查询博文(前台用)
+    List<Article> selectByUserName(@Param("userName")String userName);
+
+    //11.查询博文相关数量信息(博文总数和评论总数)
+    ArticleCount countArticleInfoByUserName(@Param("userName")String userName);
 }
+

@@ -39,6 +39,11 @@ public interface ITagService {
                                       String userName);
 
     //9.获取所有标签(绑定用)
-    Results<Tag> getTag(String userName);
+    Results<Tag> getTags(String userName);
 
+    //10.统计每个用户的标签数量
+    Long countTagByUser(String userName);
+
+    //11.查询用户所有标签
+    List<Tag> getTagsByUser(String userName);
 }

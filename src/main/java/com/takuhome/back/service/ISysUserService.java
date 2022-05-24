@@ -1,6 +1,7 @@
 package com.takuhome.back.service;
 
 import com.takuhome.back.entity.SysUser;
+import com.takuhome.back.entity.SysUserFront;
 import com.takuhome.back.result.Results;
 
 import java.util.List;
@@ -44,5 +45,8 @@ public interface ISysUserService {
 
     //10.根据用户邮箱查询用户
     SysUser getUserByEmail(String userEmail);
+
+    //11.根据用户名查询用户(前台信息用)
+    SysUserFront getUserInfoForFront(String userName);
 
 }

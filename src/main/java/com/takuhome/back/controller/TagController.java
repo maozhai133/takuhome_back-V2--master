@@ -181,6 +181,6 @@ public class TagController {
     @ResponseBody
     public Results<Tag> getTagList(String userName) {
         System.out.println("调用获取所有标签(绑定下拉列表)");
-        return ITagService.getTag(userName);
+        return ITagService.getTags(userName);
     }
 }

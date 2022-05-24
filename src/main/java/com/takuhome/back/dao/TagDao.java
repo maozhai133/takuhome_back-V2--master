@@ -47,5 +47,5 @@ public interface TagDao {
     Long getTagByNamePage(String tagName,@Param("userName")String userName);
 
     //8.获取所有标签(绑定下拉列表)
-    List<Tag> getTag(@Param("userName")String userName);
+    List<Tag> getTagsByUserName(@Param("userName")String userName);
 }

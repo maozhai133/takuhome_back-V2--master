@@ -2,8 +2,10 @@ package com.takuhome.back.service.impl;
 
 import com.takuhome.back.dao.SysUserDao;
 import com.takuhome.back.entity.SysUser;
+import com.takuhome.back.entity.SysUserFront;
 import com.takuhome.back.result.Results;
 import com.takuhome.back.service.ISysUserService;
+import com.takuhome.back.util.dozer.DozerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -140,5 +142,14 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public SysUser getUserByEmail(String userEmail) {
         return sysUserDao.getUserByEmail(userEmail);
+    }
+
+    @Override
+    public SysUserFront getUserInfoForFront(String userName) {
+        //查询用户信息
+        SysUser userByUserName = sysUserDao.getUserByUserName(userName);
+        //通过dozer映射新的实体
+        SysUserFront userFrontInfo = DozerUtil.transfor(userByUserName, SysUserFront.class);
+        return userFrontInfo;
     }
 }

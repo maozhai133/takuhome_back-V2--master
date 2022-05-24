@@ -143,6 +143,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!--        dozer工具类-->
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.2.1</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.slf4j</groupId>-->
 <!--            <artifactId>slf4j-api</artifactId>-->

@@ -1,6 +1,7 @@
 package com.takuhome.back.service;
 
 import com.takuhome.back.entity.Article;
+import com.takuhome.back.entity.ArticleCount;
 import com.takuhome.back.result.Results;
 
 import java.util.List;
@@ -49,4 +50,10 @@ public interface IArticleService {
 
     //11.根据标签id查询博文(删除标签时检测)
     List<Article> checkTagById(Integer tagId);
+
+    //12.根据用户名查询博文(前台用)
+    List<Article> selectByUserName(String userName);
+
+    //13.查询博文相关数量信息(博文总数和评论总数)
+    ArticleCount countArticleInfoByUserName(String userName);
 }

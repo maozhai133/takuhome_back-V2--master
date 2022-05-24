@@ -3,6 +3,7 @@ package com.takuhome.back.service.impl;
 import com.takuhome.back.dao.ArticleDao;
 import com.takuhome.back.dao.CategoryDao;
 import com.takuhome.back.entity.Article;
+import com.takuhome.back.entity.ArticleCount;
 import com.takuhome.back.result.Results;
 import com.takuhome.back.service.IArticleService;
 import com.takuhome.back.util.time.TimeUtil;
@@ -207,23 +208,47 @@ public class ArticleServiceImpl implements IArticleService {
 
     /**
      * 根据分类id查询博文(删除分类时的检测)
+     *
      * @param categoryId
      * @param userName
      * @return
      */
     @Override
     public List<Article> checkCategoryById(Integer categoryId, String userName) {
-        return articleDao.checkCategoryById(categoryId,userName);
+        return articleDao.checkCategoryById(categoryId, userName);
     }
 
     /**
      * 根据标签id查询博文(删除标签时的检测)
+     *
      * @param tagId
      * @return
      */
     @Override
     public List<Article> checkTagById(Integer tagId) {
         return articleDao.checkTagById(tagId);
+    }
+
+    /**
+     * 根据用户名查询博文(前台)
+     *
+     * @param userName
+     * @return
+     */
+    @Override
+    public List<Article> selectByUserName(String userName) {
+        return articleDao.selectByUserName(userName);
+    }
+
+    /**
+     * 查询博文相关数量信息(博文总数和评论总数)
+     *
+     * @param userName
+     * @return
+     */
+    @Override
+    public ArticleCount countArticleInfoByUserName(String userName) {
+        return articleDao.countArticleInfoByUserName(userName);
     }
 
 }

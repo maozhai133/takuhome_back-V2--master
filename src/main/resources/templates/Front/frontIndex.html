@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" th:href="@{/front/bootstrap/css/bootstrap.min.css}">
+    <script th:src="@{/front/bootstrap/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/front/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/front/vue/vue.js}"></script>
+    <script th:src="@{/front/axios/axios.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/front/css/me.css}">
+    <script th:src="@{/front/bootstrap/js/holder.min.js}"></script>
+    
+</head>
+<body>
+    <header>
+        <!-- 导航 -->
+        <nav>
+            <div class="site-logo">
+                <a href="#">博客前台</a>
+            </div>
+            <div class="site-nav">
+                <ul id="menu">
+                    <li>
+                        <a href="#">首页</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/Front/comeback}">后台管理</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="wrap">
+            <!-- 左边 -->
+            <div class="leftBox">
+                <article>
+                    <div class="article-box">
+                        <div class="card-thumb"></div>
+                        <h2 class="article-title">
+                            <a href="#">文章标题</a>
+                        </h2>
+                        <p class="article-describe">
+                            "文章简介描述"
+                        </p>
+                    </div>
+                    <div class="article-footer">
+                        <span>发布时间</span>
+                        <span>评论</span>
+                        <div class="readMove">
+                            <a href="#">阅读全文</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- 右边 -->
+            <div class="rightBox">
+                <aside class="aboutMe">
+                    <div class="photo-background"></div>
+                    <div class="avatar">
+                        <img th:src="${userFront.headImg}" alt="头像">
+                    </div>
+                    <div class="notes" th:text="${userFront.nickName}">昵称</div>
+                    <div class="statistics">
+                        <ul>
+                            <li>
+                                <div class="count" th:text="${userFront.articleCount.countArticles}">0</div>
+                                <div class="type">文章</div>
+                            </li>      
+                            <li>
+                                <div class="count" th:text="${userFront.countTags}">0</div>
+                                <div class="type">标签</div>
+                            </li> 
+                            <li>
+                                <div class="count" th:text="${userFront.articleCount.countComments}">0</div>
+                                <div class="type">评论</div>
+                            </li>                  
+                        </ul>
+                    </div>
+                </aside>
+                <aside class="tags">
+                    <div class="title">标签云</div>
+                    <div class="box">
+                        <ul>
+                            <li th:each="tagsData:${userFront.tags}">
+                                <a th:text="${tagsData.tagName}">测试标签</a>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

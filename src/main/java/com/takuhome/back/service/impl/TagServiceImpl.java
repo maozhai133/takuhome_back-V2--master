@@ -148,7 +148,23 @@ public class TagServiceImpl implements ITagService {
      * @return
      */
     @Override
-    public Results<Tag> getTag(String userName) {
-        return Results.success(tagDao.getTag(userName));
+    public Results<Tag> getTags(String userName) {
+        return Results.success(tagDao.getTagsByUserName(userName));
+    }
+
+    /**
+     * 统计标签数量
+     *
+     * @param userName
+     * @return
+     */
+    @Override
+    public Long countTagByUser(String userName) {
+        return tagDao.countAllTag(userName);
+    }
+
+    @Override
+    public List<Tag> getTagsByUser(String userName) {
+        return tagDao.getTagsByUserName(userName);
     }
 }

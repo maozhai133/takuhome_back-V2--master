@@ -65,9 +65,8 @@
         select count(*) from taku_tag where adm_username=#{userName} and tag_name like '%${tagName}%'
     </select>
 
-    <!--     查询所有标签(绑定下拉列表)-->
-    <select id="getTag" resultType="com.takuhome.back.entity.Tag" parameterType="string">
+    <!--     根据用户名查询所有标签-->
+    <select id="getTagsByUserName" resultType="com.takuhome.back.entity.Tag" parameterType="string">
         select<include refid="Base_result"/> from taku_tag where adm_username=#{userName}
     </select>
-
 </mapper>

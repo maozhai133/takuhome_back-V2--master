@@ -145,5 +145,13 @@
         select<include refid="Base_result"/> from taku_article where article_tag1=#{tagId} or article_tag2=#{tagId} or article_tag3=#{tagId}
     </select>
 
+<!--    10.根据用户名查询博文-->
+    <select id="selectByUserName" resultType="com.takuhome.back.entity.Article" parameterType="string">
+        select <include refid="Base_result"/> from taku_article where adm_username=#{userName}
+    </select>
 
+<!--    11.查询博文文章和评论数量-->
+    <select id="countArticleInfoByUserName" resultType="com.takuhome.back.entity.ArticleCount" parameterType="string">
+        SELECT COUNT(article_id) AS 'countArticles',sum(count_comment) AS 'countComments' FROM taku_article where adm_username=#{userName}
+    </select>
 </mapper>

@@ -1,19 +1,24 @@
 package com.takuhome.back.controller;
 
+import com.takuhome.back.entity.Article;
 import com.takuhome.back.entity.ArticleCount;
 import com.takuhome.back.entity.SysUser;
 import com.takuhome.back.entity.SysUserFront;
 import com.takuhome.back.service.IArticleService;
 import com.takuhome.back.service.ISysUserService;
 import com.takuhome.back.service.ITagService;
+import com.takuhome.back.util.time.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
+ * 前台控制器
+ *
  * @Title:FrontController
  * @Author:NekoTaku
  * @Date:2022/05/23 9:49
@@ -53,7 +58,13 @@ public class FrontController {
         //查询用户所有标签
         userInfoForFront.setTags(tagService.getTagsByUser(user.getUserName()));
 
+        List<Article> articles = articleService.selectByUserName(user.getUserName());
+        for (Article article : articles) {
+            article.setArticleCreateTime(TimeUtil.getTimeFormat(article.getArticleCreateTime()));
+        }
+
         model.addAttribute("userFront", userInfoForFront);
+        model.addAttribute("articles",articles);
 
         return "/Front/frontIndex";
     }
@@ -69,4 +80,6 @@ public class FrontController {
         System.out.println("跳回后台管理");
         return "redirect:/index";
     }
+
+
 }

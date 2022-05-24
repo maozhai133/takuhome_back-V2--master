@@ -154,7 +154,7 @@ main .wrap .leftBox article {
 }
 main .wrap .leftBox article .article-box {
     overflow: hidden;
-    padding: 20px;
+    display: flex;
 }
 main .wrap .leftBox article .article-box .card-thumb {
     float: left;
@@ -180,6 +180,20 @@ main .wrap .leftBox article .article-footer span {
 main .wrap .leftBox article .article-footer .readMove {
     float: right;
 }
-
+.Left_text {
+    padding: 20px;
+    width: 60%;
+}
+.right_img {
+    width: 40%;
+}
+.right_img div {
+    margin-left: -15px;
+}
+.right_img img{
+    height: 100%;
+    width: 300px;
+    padding: 10px;
+}
 
 

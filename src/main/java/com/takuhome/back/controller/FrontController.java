@@ -11,7 +11,10 @@ import com.takuhome.back.util.time.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -81,5 +84,40 @@ public class FrontController {
         return "redirect:/index";
     }
 
+    /**
+     * 阅读详细博文
+     * @param request
+     * @param model
+     * @return
+     */
+    @RequestMapping("/readDetail")
+    public String readDetail(HttpServletRequest request,Model model){
+
+        // 获取用户名
+        String userName = ((SysUser) request.getSession().getAttribute("user")).getUserName();
+        // 获取博文id
+        Integer articleId = Integer.parseInt(request.getParameter("articleId"));
+        System.out.println("获取博文id："+articleId);
+        // 根据用户名和博文id查询博文
+        Article articleById = articleService.getArticleById(articleId, userName);
+        //设置时间格式
+        articleById.setArticleCreateTime(TimeUtil.getTimeFormat(articleById.getArticleCreateTime()));
+
+        articleById.setArticleContent(HtmlUtils.htmlUnescape(articleById.getArticleContent()));
+
+        //映射新的前台所需要的实体层
+        SysUserFront userInfoForFront = sysUserService.getUserInfoForFront(userName);
+        //统计用户博文数量和评论数量
+        ArticleCount articleCount = articleService.countArticleInfoByUserName(userName);
+        userInfoForFront.setArticleCount(articleCount);
+        //查询用户所有标签
+        userInfoForFront.setCountTags(tagService.countTagByUser(userName));
+
+
+
+        model.addAttribute("article",articleById);
+        model.addAttribute("userFront", userInfoForFront);
+        return "/Front/frontContents";
+    }
 
 }

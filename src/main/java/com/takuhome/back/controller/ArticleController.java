@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class ArticleController {
             return Results.failure(ResponseCode.ARTICLE_TITLE_REPEAT.getCode()
                     , ResponseCode.ARTICLE_TITLE_REPEAT.getMessage());
         }
+        articleContent = HtmlUtils.htmlEscape(articleContent);
         return IArticleService.addArticle(articleContent, articleImage, articleTitle, articleIsTop
                 , categoryId, articleDesc, articleTag1, articleTag2, articleTag3,userName);
     }

@@ -90,8 +90,6 @@ public class UploadHeadController {
         jsonObject.put("msg", url);
 
 //        System.out.println(url);
-
-
         response.setHeader("Content-Type", "text/html");
         response.getWriter().write(jsonObject.toString());
     }

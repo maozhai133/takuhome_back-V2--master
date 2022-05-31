@@ -3,6 +3,10 @@
     padding: 0;
     box-sizing: border-box;
 }
+img {
+    vertical-align: middle;
+    border-style: none;
+}
 ul {
     overflow: hidden;
     margin-bottom: 0 !important;
@@ -78,7 +82,7 @@ main .wrap .rightBox .aboutMe {
     margin-bottom: 20px;
 }
 main .wrap .rightBox .aboutMe .photo-background {
-    background: url(/96f0a10….jpg) no-repeat center;
+    /*background: url() no-repeat center;*/
     height: 78px;
 }
 main .wrap .rightBox .aboutMe .avatar {
@@ -154,6 +158,7 @@ main .wrap .leftBox article {
 }
 main .wrap .leftBox article .article-box {
     overflow: hidden;
+    padding: 20px;
     display: flex;
 }
 main .wrap .leftBox article .article-box .card-thumb {
@@ -180,20 +185,234 @@ main .wrap .leftBox article .article-footer span {
 main .wrap .leftBox article .article-footer .readMove {
     float: right;
 }
+
+main .wrap .leftBox article .article-box .article-title h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+main .wrap .leftBox article .article-box .article-info {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.markdown-body {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    line-height: 1.5;
+    color: #24292e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+main .wrap .leftBox article .article-box h2 {
+    color: #343a40;
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.ant-form {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5;
+    list-style: none;
+    -webkit-font-feature-settings: 'tnum';
+    font-feature-settings: 'tnum';
+}
+
+main .wrap .leftBox article .article-box #comment .ant-form-item {
+    margin-bottom: 9px;
+}
+
+.ant-form-item-control {
+    position: relative;
+    line-height: 40px;
+    zoom: 1;
+}
+
+.ant-form-item-children {
+    position: relative;
+}
+
+form textarea.ant-input {
+    height: auto;
+    margin-bottom: 4px;
+}
+
+textarea.ant-input {
+    max-width: 100%;
+    height: auto;
+    min-height: 32px;
+    vertical-align: bottom;
+    -webkit-transition: all 0.3s, height 0s;
+    transition: all 0.3s, height 0s;
+}
+
+.ant-input {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-variant: tabular-nums;
+    list-style: none;
+    -webkit-font-feature-settings: 'tnum';
+    font-feature-settings: 'tnum';
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 32px;
+    padding: 4px 11px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.ant-btn-primary {
+    color: #fff;
+    background-color: #1890ff;
+    border-color: #1890ff;
+    text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+    -webkit-box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
+    box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
+}
+
+.ant-btn > i, .ant-btn > span {
+    display: inline-block;
+    pointer-events: none;
+}
+
+.ant-btn-primary {
+    color: #fff;
+    background-color: #1890ff;
+    border-color: #1890ff;
+    text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+    -webkit-box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
+    box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
+}
+
+.ant-btn {
+    line-height: 1.499;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: center;
+    background-image: none;
+    border: 1px solid transparent;
+    -webkit-box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
+    box-shadow: 0 2px 0 rgb(0 0 0 / 2%);
+    cursor: pointer;
+    -webkit-transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    height: 32px;
+    padding: 0 15px;
+    font-size: 14px;
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border-color: #d9d9d9;
+}
+
+.ant-btn-primary:hover, .ant-btn-primary:focus {
+    color: #fff;
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+}
+
+.ant-input:hover {
+    border-color: #40a9ff;
+    border-right-width: 1px !important;
+}
+
+.ant-btn-primary:hover, .ant-btn-primary:focus {
+    color: #fff;
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+}
+
+main .wrap .leftBox article .article-box #comment h3 {
+    text-align: center;
+    height: 20px;
+    line-height: 20px;
+    color: #7D7D7D;
+}
+main .wrap .leftBox article .article-box #comment h3 span {
+    background: #fff;
+    padding: 0 10px;
+    position: relative;
+    z-index: 2;
+}
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main {
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+}
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main .author-info {
+    font-size: 13px;
+    overflow: hidden;
+}
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main .author-info img {
+    border-radius: 50%;
+    width: 50px;
+    height: auto;
+    float: left;
+    margin-right: 10px;
+}
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main .author-info p {
+    line-height: 25px;
+    height: 25px;
+    margin-bottom: 0!important;
+}
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main .author-info .ua {
+    margin-right: 6px;
+}
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main .author-info p {
+    line-height: 25px;
+    height: 25px;
+    margin-bottom: 0!important;
+}
+main .wrap .leftBox article .article-box p {
+    color: #3e4953;
+}
+
+main .wrap .leftBox article .article-box #comment #commentBox ul li.comment-main .comment-body {
+    line-height: 2;
+    color: #63686d;
+    font-size: 15px;
+    margin-top: 10px;
+}
 .Left_text {
-    padding: 20px;
     width: 60%;
+    height: 100%;
 }
 .right_img {
     width: 40%;
 }
-.right_img div {
-    margin-left: -15px;
-}
 .right_img img{
     height: 100%;
-    width: 300px;
-    padding: 10px;
+    width: 100%;
 }
+
 
 

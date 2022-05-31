@@ -56,6 +56,7 @@ public class ArticleController {
             return Results.failure(ResponseCode.ARTICLE_TITLE_REPEAT.getCode()
                     , ResponseCode.ARTICLE_TITLE_REPEAT.getMessage());
         }
+        // 博文内容转码
         articleContent = HtmlUtils.htmlEscape(articleContent);
         return IArticleService.addArticle(articleContent, articleImage, articleTitle, articleIsTop
                 , categoryId, articleDesc, articleTag1, articleTag2, articleTag3,userName);
@@ -87,7 +88,10 @@ public class ArticleController {
     public String editArticle(Model model, Article article,String userName) {
 
         System.out.println("调用打开博文编辑");
-        model.addAttribute(IArticleService.getArticleById(article.getArticleId(),userName));
+        Article articleById = IArticleService.getArticleById(article.getArticleId(), userName);
+        // 博文内容解码
+        articleById.setArticleContent(HtmlUtils.htmlUnescape(articleById.getArticleContent()));
+        model.addAttribute(articleById);
 
         //获取当前分类id
         Integer categoryId = IArticleService.getArticleById(article.getArticleId(),userName).getCategoryId();
@@ -130,6 +134,8 @@ public class ArticleController {
         }
         //获取分类名
         article.setCategoryName(ICategoryService.getCategoryById(article.getCategoryId(),userName).getCategoryName());
+        // 博文内容转码
+        article.setArticleContent(HtmlUtils.htmlEscape(article.getArticleContent()));
         return IArticleService.updateArticle(article);
     }
 

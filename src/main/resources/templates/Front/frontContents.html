@@ -25,7 +25,7 @@
         <div class="site-nav">
             <ul id="menu">
                 <li>
-                    <a th:href="@{/Front/goFront}">前台首页</a>
+                    <a th:href="@{/Front/goFront}">首页</a>
                 </li>
                 <li>
                     <a th:href="@{/Front/comeback}">后台管理</a>
@@ -110,7 +110,7 @@
                                 <li class="comment-main">
                                     <div class="root-comment">
                                         <div class="author-info">
-                                            <img src="" alt="头像(默认)">
+                                            <img src="http://localhost:8081/asset/headImg/defaultImage/cat.jpg" alt="头像(默认)">
                                             <p>
                                                 <span class="ua author-name">昵称</span>
                                             </p>
@@ -160,7 +160,7 @@
 
 <script th:inline="javascript">
     var articleContext = [[${article.articleContent}]];
-    console.log(articleContext)
+    // console.log(articleContext)
 
     window.onload = function (){
         console.log("初始化记载")

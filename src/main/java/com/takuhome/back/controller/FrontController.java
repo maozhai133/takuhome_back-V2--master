@@ -103,6 +103,7 @@ public class FrontController {
         //设置时间格式
         articleById.setArticleCreateTime(TimeUtil.getTimeFormat(articleById.getArticleCreateTime()));
 
+        // 博文内容解码
         articleById.setArticleContent(HtmlUtils.htmlUnescape(articleById.getArticleContent()));
 
         //映射新的前台所需要的实体层

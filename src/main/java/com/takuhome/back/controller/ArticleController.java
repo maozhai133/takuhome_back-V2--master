@@ -56,7 +56,7 @@ public class ArticleController {
             return Results.failure(ResponseCode.ARTICLE_TITLE_REPEAT.getCode()
                     , ResponseCode.ARTICLE_TITLE_REPEAT.getMessage());
         }
-        // 博文内容转码
+        // 博文内容编码转义
         articleContent = HtmlUtils.htmlEscape(articleContent);
         return IArticleService.addArticle(articleContent, articleImage, articleTitle, articleIsTop
                 , categoryId, articleDesc, articleTag1, articleTag2, articleTag3,userName);
@@ -134,7 +134,7 @@ public class ArticleController {
         }
         //获取分类名
         article.setCategoryName(ICategoryService.getCategoryById(article.getCategoryId(),userName).getCategoryName());
-        // 博文内容转码
+        // 博文内容编码转义
         article.setArticleContent(HtmlUtils.htmlEscape(article.getArticleContent()));
         return IArticleService.updateArticle(article);
     }

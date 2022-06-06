@@ -7,12 +7,14 @@
     <title>博客内容</title>
 
     <link rel="stylesheet" th:href="@{/front/bootstrap/css/bootstrap.min.css}">
-    <script th:src="@{/front/bootstrap/js/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/front/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/front/vue/vue.js}"></script>
     <script th:src="@{/front/axios/axios.min.js}"></script>
     <link rel="stylesheet" th:href="@{/front/css/me2.css}">
     <script th:src="@{/front/bootstrap/js/holder.min.js}"></script>
+    <script type="text/javascript" th:src="@{/xadmin/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/xadmin/js/jquery.cookie.js}" ></script>
+    <script type="text/javascript" th:src="@{/xadmin/js/jQuery.min.js}"></script>
 
 </head>
 <body>
@@ -57,12 +59,14 @@
                             留下来说几句吧...
                             <span class="hidden">取消</span>
                         </p>
-                        <form class="ant-form ant-form-horizontal">
+<!--                        <form class="ant-form ant-form-horizontal">-->
+                        <div class="ant-form ant-form-horizontal">
                             <div class="ant-row ant-form-item">
                                 <div class="ant-form-item-control-wrapper">
                                     <div class="ant-form-item-control">
 											<span class="ant-form-item-children">
-												<textarea placeholder="留下来说几句吧..." rows="6" tabindex="1" id=" comment"  class="ant-input"></textarea>
+												<textarea placeholder="留下来说几句吧..." rows="6" tabindex="1" id="_comment"
+                                                          class="ant-input"></textarea>
 											</span>
                                     </div>
                                 </div>
@@ -73,7 +77,8 @@
                                     <div class="ant-form-item-control-wrapper">
                                         <div class="ant-form-item-control">
 												<span class="ant-form-item-children">
-													<input placeholder="昵称 (必填)" tabindex="2" type="text" id="nickname"  class="ant-input" value="">
+													<input placeholder="昵称 (必填)" tabindex="2" type="text"
+                                                           id="comm_nickname" class="ant-input" value="">
 												</span>
                                         </div>
                                     </div>
@@ -82,7 +87,8 @@
                                     <div class="ant-form-item-control-wrapper">
                                         <div class="ant-form-item-control">
 												<span class="ant-form-item-children">
-													<input placeholder="邮箱 (必填)" tabindex="3" type="text" id="email"  class="ant-input" value="">
+													<input placeholder="邮箱 (必填)" tabindex="3" type="text"
+                                                           id="comm_email" class="ant-input" value="">
 												</span>
                                         </div>
                                     </div>
@@ -91,7 +97,9 @@
                                     <div class="ant-form-item-control-wrapper">
                                         <div class="ant-form-item-control">
 												<span class="ant-form-item-children">
-													<button style="background-color: #40a9ff; color: #fff;" type="submit" class="ant-btn ant-btn-primary">
+													<button id="comm_submit"
+                                                            style="background-color: #40a9ff; color: #fff;"
+                                                            class="ant-btn ant-btn-primary">
 														<span>发表评论</span>
 													</button>
 												</span>
@@ -100,23 +108,23 @@
                                 </div>
                             </div>
 
-                        </form>
+                        </div>
 
                         <h3>
-                            <span>共 xx 条评论</span>
+                            <span th:text="'共 '+${userFront.countComments}+' 条评论'">共 0 条评论</span>
                         </h3>
                         <div id="commentBox">
                             <ul class="commentList">
                                 <li class="comment-main">
                                     <div class="root-comment">
                                         <div class="author-info">
-                                            <img src="http://localhost:8081/asset/headImg/defaultImage/cat.jpg" alt="头像(默认)">
+                                            <img src="http://localhost:8081/asset/headImg/defaultImage/cat.jpg"
+                                                 alt="头像(默认)">
                                             <p>
                                                 <span class="ua author-name">昵称</span>
                                             </p>
                                             <p>xxxx年xx月xx日 xx:xx</p>
                                         </div>
-
                                         <div class="comment-body">
                                             评论内容
                                         </div>
@@ -158,14 +166,77 @@
     </div>
 </main>
 
-<script th:inline="javascript">
-    var articleContext = [[${article.articleContent}]];
-    // console.log(articleContext)
+<script th:inline="javascript" type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
 
-    window.onload = function (){
-        console.log("初始化记载")
-        $('#articleMain').append(articleContext)
-    }
+        // 博文内容
+        var articleContext = [[${article.articleContent}]];
+
+        // 博文id
+        var articleId = [[${article.articleId}]];
+
+        // 博文标题
+        var articleTitle = [[${article.articleTitle}]];
+
+        // console.log(articleContext)
+
+        window.onload = function () {
+            console.log("初始化记载")
+            $('#articleMain').append(articleContext);
+        }
+
+        //发表评论
+        document.querySelector('#comm_submit').onclick = function () {
+            var nickname = $('#comm_nickname').val();
+            var comment = $('#_comment').val();
+            var comm_email = $('#comm_email').val();
+
+            //验证
+            if (comment == '' || comment == 'undefined') {
+                layer.alert("请先填写评论内容！");
+                return;
+            }
+            if (nickname == '' || nickname == 'undefined') {
+                layer.alert("请先填写昵称！");
+                return;
+            }
+            if (comm_email == '' || comm_email == 'undefined') {
+                layer.alert("请先填写邮箱！");
+                return;
+            }
+            //验证邮箱格式是否正确
+            if (!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(comm_email)) {
+                layer.alert("邮箱格式错误，请输入正确的邮箱!")
+                return;
+            }
+            // alert('test');
+            //提交
+            $.ajax({
+                url: '/Comment/addComment',
+                data: {
+                    commentNickName: nickname,
+                    commentContent: comment,
+                    commentUserEmail: comm_email,
+                    articleId: articleId,
+                    articleTitle: articleTitle
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert('成功发表评论', {icon: 1}, function () {
+                            window.parent.location.reload();
+                        });
+                    }
+                }
+            })
+
+        }
+    })
+
 </script>
 
 </body>

@@ -29,4 +29,6 @@ public class SysUserFront {
     private ArticleCount articleCount;//博文评论和文章数量
     private Long countTags;//标签数量
     private List<Tag> tags;//标签列表
+
+    private Long countComments;//评论数量
 }

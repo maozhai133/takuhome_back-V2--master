@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.takuhome.back.dao.CommentDao">
+
+    <resultMap id="CommentMap" type="com.takuhome.back.entity.Comment">
+        <result property="commentId" column="comm_id"/>
+        <result property="commentNickName" column="comm_nickname"/>
+        <result property="commentContent" column="comm_content"/>
+        <result property="commentCreatedTime" column="comm_createtime"/>
+        <result property="commentUserEmail" column="comm_useremail"/>
+        <result property="articleId" column="artcle_id"/>
+        <result property="articleUserName" column="artcle_user"/>
+        <result property="articleTitle" column="artcle_title"/>
+    </resultMap>
+
+    <sql id="Base_result">
+        comm_nickname,comm_content,comm_createtime,comm_useremail,artcle_id,artcle_user,artcle_title
+    </sql>
+
+<!--    1.发表评论-->
+    <insert id="addComment" useGeneratedKeys="true" keyProperty="commentId"
+        parameterType="com.takuhome.back.entity.Comment">
+            insert into taku_comment(<include refid="Base_result"/>) values(#{commentNickName},
+                  #{commentContent},now(),#{commentUserEmail},#{articleId},#{articleUserName},#{articleTitle})
+    </insert>
+
+<!--    2.统计评论数量-->
+    <select id="countCommentNumber" resultType="java.lang.Long" parameterType="integer">
+        select count(*) from taku_comment where artcle_id=#{articleId}
+    </select>
+</mapper>

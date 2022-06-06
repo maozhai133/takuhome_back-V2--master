@@ -5,15 +5,14 @@ import com.takuhome.back.entity.ArticleCount;
 import com.takuhome.back.entity.SysUser;
 import com.takuhome.back.entity.SysUserFront;
 import com.takuhome.back.service.IArticleService;
+import com.takuhome.back.service.ICommentService;
 import com.takuhome.back.service.ISysUserService;
 import com.takuhome.back.service.ITagService;
 import com.takuhome.back.util.time.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +35,9 @@ public class FrontController {
 
     @Autowired
     private IArticleService articleService;
+
+    @Autowired
+    private ICommentService commentService;
 
     @Autowired
     private ITagService tagService;
@@ -100,6 +102,10 @@ public class FrontController {
         System.out.println("获取博文id："+articleId);
         // 根据用户名和博文id查询博文
         Article articleById = articleService.getArticleById(articleId, userName);
+
+        //根据博文id查询当前博文的评论数量
+        Long commentNumber = commentService.countCommentNumber(articleId);
+
         //设置时间格式
         articleById.setArticleCreateTime(TimeUtil.getTimeFormat(articleById.getArticleCreateTime()));
 
@@ -114,6 +120,8 @@ public class FrontController {
         //查询用户所有标签
         userInfoForFront.setCountTags(tagService.countTagByUser(userName));
 
+        //设置当前博文评论总数
+        userInfoForFront.setCountComments(commentNumber);
 
 
         model.addAttribute("article",articleById);

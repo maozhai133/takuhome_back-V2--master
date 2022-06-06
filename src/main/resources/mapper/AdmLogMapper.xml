@@ -16,7 +16,7 @@
 
     <insert id="insertAdmLog" useGeneratedKeys="true" keyProperty="logId"
             parameterType="com.takuhome.back.entity.SysAdminUserLog">
-        insert into taku_adminlog(<include refid="Base_result"/>) value(#{admId},#{admUser}
+        insert into taku_adminlog(<include refid="Base_result"/>) values(#{admId},#{admUser}
             ,#{admMsg},now())
     </insert>
 

@@ -24,4 +24,9 @@ public interface ICommentService {
     //3.根据博文id查询相关评论
     List<Comment> selectCommentById(Integer articleId);
 
+    //4.查询评论并分页
+    Results<Comment> getAllComment(Integer pageNum, Integer limit, String articleUserName);
+
+    //5.根据id删除评论
+    Results<Comment> delCommentById(String articleUserName,Integer commentId);
 }

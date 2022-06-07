@@ -54,7 +54,7 @@ public class TagController {
     }
 
     /**
-     * 获取全部标签，并分类
+     * 获取全部标签，并分页
      *
      * @param page
      * @param userName
@@ -63,7 +63,7 @@ public class TagController {
     @GetMapping(value = "/tagList")
     @ResponseBody
     public Results<Tag> list(Page page, String userName) {
-        System.out.println("调用获取全部标签，并分类");
+        System.out.println("调用获取全部标签，并分页");
         page.countOffset();
         return ITagService.getAllTag(page.getOffset(), page.getLimit(), userName);
     }

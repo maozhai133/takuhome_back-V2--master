@@ -22,7 +22,7 @@
     <!-- 导航 -->
     <nav>
         <div class="site-logo">
-            <a href="#">博客前台</a>
+            <a th:href="@{/Front/goFront}">博客前台</a>
         </div>
         <div class="site-nav">
             <ul id="menu">
@@ -59,7 +59,6 @@
                             留下来说几句吧...
                             <span class="hidden">取消</span>
                         </p>
-<!--                        <form class="ant-form ant-form-horizontal">-->
                         <div class="ant-form ant-form-horizontal">
                             <div class="ant-row ant-form-item">
                                 <div class="ant-form-item-control-wrapper">
@@ -107,7 +106,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
                         <h3>
@@ -158,6 +156,16 @@
                         <li>
                             <div class="count" th:text="${userFront.articleCount.countComments}">0</div>
                             <div class="type">评论</div>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            <aside class="tags">
+                <div class="title">标签云</div>
+                <div class="box">
+                    <ul>
+                        <li th:each="tagsData:${tags}">
+                            <a th:text="${tagsData}">测试标签</a>
                         </li>
                     </ul>
                 </div>

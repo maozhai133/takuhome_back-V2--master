@@ -1,10 +1,7 @@
 package com.takuhome.back.controller;
 
 import com.takuhome.back.entity.*;
-import com.takuhome.back.service.IArticleService;
-import com.takuhome.back.service.ICommentService;
-import com.takuhome.back.service.ISysUserService;
-import com.takuhome.back.service.ITagService;
+import com.takuhome.back.service.*;
 import com.takuhome.back.util.time.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +37,7 @@ public class FrontController {
     @Autowired
     private ITagService tagService;
 
+
     /**
      * 跳转到前台页面
      *
@@ -60,13 +59,16 @@ public class FrontController {
         //查询用户所有标签
         userInfoForFront.setTags(tagService.getTagsByUser(user.getUserName()));
 
+
+        //根据用户名查询博文
         List<Article> articles = articleService.selectByUserName(user.getUserName());
         for (Article article : articles) {
             article.setArticleCreateTime(TimeUtil.getTimeFormat(article.getArticleCreateTime()));
         }
 
+
         model.addAttribute("userFront", userInfoForFront);
-        model.addAttribute("articles",articles);
+        model.addAttribute("articles", articles);
 
         return "/Front/frontIndex";
     }
@@ -85,18 +87,19 @@ public class FrontController {
 
     /**
      * 阅读详细博文
+     *
      * @param request
      * @param model
      * @return
      */
     @RequestMapping("/readDetail")
-    public String readDetail(HttpServletRequest request,Model model){
+    public String readDetail(HttpServletRequest request, Model model) {
 
         // 获取用户名
         String userName = ((SysUser) request.getSession().getAttribute("user")).getUserName();
         // 获取博文id
         Integer articleId = Integer.parseInt(request.getParameter("articleId"));
-        System.out.println("获取博文id："+articleId);
+        System.out.println("获取博文id：" + articleId);
         // 根据用户名和博文id查询博文
         Article articleById = articleService.getArticleById(articleId, userName);
 
@@ -123,10 +126,23 @@ public class FrontController {
         //设置当前博文评论总数
         userInfoForFront.setCountComments(commentNumber);
 
+        //为博文绑定对应的标签
+        List<String> tagsList = new ArrayList<>();
+        Integer articleTag1 = articleById.getArticleTag1();
+        Integer articleTag2 = articleById.getArticleTag2();
+        Integer articleTag3 = articleById.getArticleTag3();
+        int[] tags = new int[]{articleTag1, articleTag2, articleTag3};
+        for (int i = 0; i < tags.length; i++) {
+            if (tags[i] == 0) {
+                continue;
+            }
+            tagsList.add(tagService.getTagById(tags[i], userName).getTagName());
+        }
 
-        model.addAttribute("article",articleById);
+        model.addAttribute("article", articleById);
         model.addAttribute("userFront", userInfoForFront);
-        model.addAttribute("comments",comments);
+        model.addAttribute("comments", comments);
+        model.addAttribute("tags", tagsList);
 
         return "/Front/frontContents";
     }

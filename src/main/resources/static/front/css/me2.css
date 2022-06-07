@@ -82,7 +82,7 @@ main .wrap .rightBox .aboutMe {
     margin-bottom: 20px;
 }
 main .wrap .rightBox .aboutMe .photo-background {
-    background: url(/96f0a10….jpg) no-repeat center;
+    /*background: url(/96f0a10….jpg) no-repeat center;*/
     height: 78px;
 }
 main .wrap .rightBox .aboutMe .avatar {

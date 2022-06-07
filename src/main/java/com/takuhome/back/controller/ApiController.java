@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
  * 页面跳转共用控制器
  *
  * @author nekotaku
- * @create 2021-08-07 19:05
+ * @create 2021-10-07 19:05
  */
 @Controller
 @RequestMapping("${api-url}")

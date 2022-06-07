@@ -60,4 +60,36 @@ public class CommentServiceImpl implements ICommentService {
         return commentDao.selectCommentById(articleId);
     }
 
+    /**
+     * 查询所有评论并分页
+     *
+     * @param pageNum
+     * @param limit
+     * @param articleUserName
+     * @return
+     */
+    @Override
+    public Results<Comment> getAllComment(Integer pageNum, Integer limit, String articleUserName) {
+        return Results.success(commentDao.countAllComment(articleUserName).intValue(),
+                commentDao.getAllComment(pageNum, limit, articleUserName));
+    }
+
+    /**
+     * 根据id删除评论
+     *
+     * @param articleUserName
+     * @param commentId
+     * @return
+     */
+    @Override
+    public Results<Comment> delCommentById(String articleUserName, Integer commentId) {
+        if (commentId != null) {
+            if (commentDao.delCommentById(articleUserName, commentId) > 0) {
+                return Results.success();
+            }
+            return Results.failure();
+        }
+        return Results.failure();
+    }
+
 }

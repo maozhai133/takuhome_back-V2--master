@@ -184,10 +184,8 @@ public class ArticleServiceImpl implements IArticleService {
      */
     @Override
     public Results<Article> updateArticle(Article article) {
-//        article.setArticleCreateTime(Long.toString(getCurrentTime()));
-        article.setArticleCreateTime(Long.toString(TimeUtil.getCurrentTime()));
 
-//        System.out.println(article);
+//        article.setArticleCreateTime(Long.toString(TimeUtil.getCurrentTime()));
 
         if (articleDao.updateArticle(article) > 0) {
             return Results.success();

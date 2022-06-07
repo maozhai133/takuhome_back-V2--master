@@ -14,23 +14,42 @@
     </resultMap>
 
     <sql id="Base_result">
-        comm_id,comm_nickname,comm_content,comm_createtime,comm_useremail,artcle_id,artcle_user,artcle_title
+        comm_id
+        ,comm_nickname,comm_content,comm_createtime,comm_useremail,artcle_id,artcle_user,artcle_title
     </sql>
 
-<!--    1.发表评论-->
+    <!--    1.发表评论-->
     <insert id="addComment" parameterType="com.takuhome.back.entity.Comment">
-            insert into taku_comment(<include refid="Base_result"/>) values(null,#{commentNickName},
-                  #{commentContent},now(),#{commentUserEmail},#{articleId},#{articleUserName},#{articleTitle})
+        insert into taku_comment(<include refid="Base_result"/>) values(null,#{commentNickName},
+        #{commentContent},now(),#{commentUserEmail},#{articleId},#{articleUserName},#{articleTitle})
     </insert>
 
-<!--    2.统计评论数量-->
+    <!--    2.统计评论数量-->
     <select id="countCommentNumber" resultType="java.lang.Long" parameterType="integer">
-        select count(*) from taku_comment where artcle_id=#{articleId}
+        select count(*) from taku_comment where artcle_id = #{articleId}
     </select>
 
-<!--    3.根据博文id查询博文-->
+    <!--    3.根据博文id查询博文-->
     <select id="selectCommentById" resultMap="CommentMap" parameterType="integer">
-        select <include refid="Base_result"/> from taku_comment where artcle_id=#{articleId}
+        select
+        <include refid="Base_result"/>
+        from taku_comment where artcle_id=#{articleId}
     </select>
+
+    <!--    查询所有标签并分页-->
+    <select id="getAllComment" resultMap="CommentMap">
+        select
+        <include refid="Base_result"/>
+        from taku_comment where artcle_user=#{articleUserName} order by comm_id limit #{pageNum},#{limit}
+    </select>
+    <!--    总记录数-->
+    <select id="countAllComment" resultType="java.lang.Long">
+        select count(*) from taku_comment where artcle_user=#{articleUserName}
+    </select>
+    
+    <!--    删除评论-->
+    <delete id="delCommentById" parameterType="com.takuhome.back.entity.Comment">
+        delete from taku_comment where artcle_user=#{articleUserName} and comm_id=#{commentId}
+    </delete>
 
 </mapper>

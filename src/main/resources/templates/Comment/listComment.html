@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>博客后台管理</title>
+    <header th:replace="header.html"></header>
+</head>
+<body class="childrenBody">
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+              <a href="">评论管理</a>
+              <a>
+                <cite>评论列表</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+<div class="layui-card-body">
+    <div class="layui-card-header" style="display: inline">
+        <!--批量删除-->
+        <button class="layui-btn layui-btn-danger" onclick="delAll()" permission=""><i
+                class="layui-icon"></i>批量删除
+        </button>
+    </div>
+    <!--搜索-->
+    <!--    <form class="layui-form  layui-col-space5" style="display: inline">-->
+    <!--        <div class="layui-inline layui-show-xs-block">-->
+    <!--            <input type="text" name="tagName" placeholder="请输入标签名" autocomplete="off" class="layui-input">-->
+    <!--        </div>-->
+    <!--        <div class="layui-inline layui-show-xs-block">-->
+    <!--            <button class="layui-btn" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>-->
+    <!--        </div>-->
+    <!--    </form>-->
+    <!--分类列表显示-->
+    <div class="layui-card-body ">
+        <table class="layui-hide" id="table" lay-filter="member"></table>
+    </div>
+    <!--    工具栏-->
+    <div class="layui-card-body ">
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" permission="">删除</a>
+        </script>
+    </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+    layui.use(['table'], function () {
+        var table = layui.table;
+        form = layui.form;
+
+        var userName = [[${session.user.userName}]];
+
+        //数据绑定
+        table.render({
+            elem: '#table'
+            , url: '/Comment/CommentList'//数据接口
+            // ,toolbar:'#toolbarDemo'//开启头部工具栏，并为其绑定左侧模板
+            , page: true //开启分页
+            , id: 'comments'
+            , even: false//隔行换色
+            , where: {
+                'userName': userName
+            }
+            , response: {
+                countName: 'count', //规定数据总数的字段名称，默认：count
+                dataName: 'datas' //规定数据列表的字段名称，默认：data
+            }
+            , cols: [
+                [//表头
+                    {
+                        type: 'checkbox',
+                        fixed: 'left',
+                    }
+                    ,
+                    {
+                        field: 'number',
+                        type: 'numbers',
+                        // ,sort: true
+                        title: '序号',
+                        width: 60,
+                        fixed: 'left',
+                        align: 'center',
+                    }
+                    ,
+                    {
+                        field: 'commentId',
+                        title: 'ID',
+                        align: 'center',
+                        fixed: 'left',
+                        hide: true,
+                    }
+                    ,
+                    {
+                        field: 'articleTitle',
+                        title: '博文标题',
+                        align: 'center',
+                        sort: true,
+                    }
+                    ,
+                    {
+                        field: 'articleId',
+                        title: '博文id',
+                        align: 'center',
+                        sort: true,
+                        hide: true,
+                    }
+                    ,
+                    {
+                        field: 'commentNickName',
+                        title: '评论用户',
+                        align: 'center',
+                    }
+                    ,
+                    {
+                        field: 'commentUserEmail',
+                        title: '评论用户邮箱',
+                        align: 'center',
+                    }
+                    ,
+                    {
+                        field: 'commentContent',
+                        title: '评论内容',
+                        align: 'center',
+                    }
+                    ,
+                    {
+                        field: 'commentCreatedTime',
+                        title: '评论时间',
+                        align: 'center',
+                        sort: true
+                    }
+                    ,
+                    {
+                        title: '操作'
+                        , toolbar: '#barDemo'
+                    }
+                ]
+            ],
+            done: function () {
+            }
+        });
+
+        //监听工具条
+        table.on('tool(member)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确认删除吗?', function (index) {
+                    $.ajax({
+                        url: "/Comment/delComment",
+                        type: "DELETE",
+                        data: {
+                            commentId: data.commentId,
+                            userName: userName,
+                            articleId:data.articleId,
+                        },
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.code == 200) {
+                                layer.alert("删除成功", {icon: 1}, function (index1) {
+                                    layer.close(index1);
+                                    location.reload()
+                                });
+                            } else {
+                                layer.alert(result.msg, {icon: 2});
+                            }
+                        },
+                    });
+                });
+            }
+        });
+    })
+
+</script>
+</html>

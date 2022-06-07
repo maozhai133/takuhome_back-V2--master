@@ -59,6 +59,7 @@
                 <div class="article-footer">
                     <span th:text="'发布时间：'+${articlesDatas.articleCreateTime}"></span>
                     <span th:text="'评论：'+${articlesDatas.countComment}"></span>
+                    <span th:text="'分类：'+${articlesDatas.categoryName}"></span>
                     <div class="readMove">
                         <a th:href="@{/Front/readDetail(articleId=${articlesDatas.articleId})}">阅读全文</a>
                     </div>

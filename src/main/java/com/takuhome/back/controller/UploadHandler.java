@@ -18,7 +18,7 @@ import java.util.UUID;
  * 上传图片
  *
  * @author nekotaku
- * @create 2021-09-24 8:58
+ * @create 2022-03-01 8:58
  */
 @Controller
 @RequestMapping

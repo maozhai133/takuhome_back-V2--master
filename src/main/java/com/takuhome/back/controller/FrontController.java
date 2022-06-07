@@ -1,9 +1,6 @@
 package com.takuhome.back.controller;
 
-import com.takuhome.back.entity.Article;
-import com.takuhome.back.entity.ArticleCount;
-import com.takuhome.back.entity.SysUser;
-import com.takuhome.back.entity.SysUserFront;
+import com.takuhome.back.entity.*;
 import com.takuhome.back.service.IArticleService;
 import com.takuhome.back.service.ICommentService;
 import com.takuhome.back.service.ISysUserService;
@@ -106,6 +103,9 @@ public class FrontController {
         //根据博文id查询当前博文的评论数量
         Long commentNumber = commentService.countCommentNumber(articleId);
 
+        //根据博文id查询当前博文得评论
+        List<Comment> comments = commentService.selectCommentById(articleId);
+
         //设置时间格式
         articleById.setArticleCreateTime(TimeUtil.getTimeFormat(articleById.getArticleCreateTime()));
 
@@ -126,6 +126,8 @@ public class FrontController {
 
         model.addAttribute("article",articleById);
         model.addAttribute("userFront", userInfoForFront);
+        model.addAttribute("comments",comments);
+
         return "/Front/frontContents";
     }
 

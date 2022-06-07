@@ -14,13 +14,12 @@
     </resultMap>
 
     <sql id="Base_result">
-        comm_nickname,comm_content,comm_createtime,comm_useremail,artcle_id,artcle_user,artcle_title
+        comm_id,comm_nickname,comm_content,comm_createtime,comm_useremail,artcle_id,artcle_user,artcle_title
     </sql>
 
 <!--    1.发表评论-->
-    <insert id="addComment" useGeneratedKeys="true" keyProperty="commentId"
-        parameterType="com.takuhome.back.entity.Comment">
-            insert into taku_comment(<include refid="Base_result"/>) values(#{commentNickName},
+    <insert id="addComment" parameterType="com.takuhome.back.entity.Comment">
+            insert into taku_comment(<include refid="Base_result"/>) values(null,#{commentNickName},
                   #{commentContent},now(),#{commentUserEmail},#{articleId},#{articleUserName},#{articleTitle})
     </insert>
 
@@ -28,4 +27,10 @@
     <select id="countCommentNumber" resultType="java.lang.Long" parameterType="integer">
         select count(*) from taku_comment where artcle_id=#{articleId}
     </select>
+
+<!--    3.根据博文id查询博文-->
+    <select id="selectCommentById" resultMap="CommentMap" parameterType="integer">
+        select <include refid="Base_result"/> from taku_comment where artcle_id=#{articleId}
+    </select>
+
 </mapper>

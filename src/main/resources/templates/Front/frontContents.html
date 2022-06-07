@@ -115,17 +115,17 @@
                         </h3>
                         <div id="commentBox">
                             <ul class="commentList">
-                                <li class="comment-main">
-                                    <div class="root-comment">
+                                <li th:each="commentsData:${comments}" class="comment-main">
+                                    <div class="root-coment">
                                         <div class="author-info">
                                             <img src="http://localhost:8081/asset/headImg/defaultImage/cat.jpg"
                                                  alt="头像(默认)">
                                             <p>
-                                                <span class="ua author-name">昵称</span>
+                                                <span class="ua author-name" th:text="${commentsData.commentNickName}">昵称</span>
                                             </p>
-                                            <p>xxxx年xx月xx日 xx:xx</p>
+                                            <p th:text="${commentsData.commentCreatedTime}">xxxx年xx月xx日 xx:xx</p>
                                         </div>
-                                        <div class="comment-body">
+                                        <div class="comment-body" th:text="${commentsData.commentContent}">
                                             评论内容
                                         </div>
                                     </div>

@@ -1,8 +1,10 @@
 package com.takuhome.back.controller;
 
+import com.takuhome.back.entity.Article;
 import com.takuhome.back.entity.Comment;
 import com.takuhome.back.entity.SysUser;
 import com.takuhome.back.result.Results;
+import com.takuhome.back.service.IArticleService;
 import com.takuhome.back.service.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,9 @@ public class CommentController {
     @Autowired
     private ICommentService commentService;
 
+    @Autowired
+    private IArticleService articleService;
+
     /**
      * 发表评论
      * @param request
@@ -37,8 +42,18 @@ public class CommentController {
         //获取用户名
         String userName = ((SysUser) request.getSession().getAttribute("user")).getUserName();
         comment.setArticleUserName(userName);
-//        System.out.println("获取评论信息"+comment);
-        return commentService.addComment(comment);
+
+        Results<Comment> commentResults = commentService.addComment(comment);
+        //更改博文信息表的评论数量
+        Long commentNumber = commentService.countCommentNumber(comment.getArticleId());
+        System.out.println("评论数量"+commentNumber);
+        Article articleById = articleService.getArticleById(comment.getArticleId(), userName);
+        articleById.setCountComment(Integer.parseInt(String.valueOf(commentNumber)));
+        articleById.setUserName(userName);
+//        System.out.println(articleById);
+        System.out.println("成功添加评论："+articleService.updateArticle(articleById));
+
+        return commentResults;
     }
 
 

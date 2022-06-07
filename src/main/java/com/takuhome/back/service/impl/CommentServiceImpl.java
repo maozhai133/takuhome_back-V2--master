@@ -7,6 +7,8 @@ import com.takuhome.back.service.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 评论服务实现层
  *
@@ -23,12 +25,13 @@ public class CommentServiceImpl implements ICommentService {
 
     /**
      * 发表评论
+     *
      * @param comment
      * @return
      */
     @Override
     public Results<Comment> addComment(Comment comment) {
-        if (commentDao.addComment(comment)>0){
+        if (commentDao.addComment(comment) > 0) {
             //评论成功
             return Results.success();
         }
@@ -37,12 +40,24 @@ public class CommentServiceImpl implements ICommentService {
 
     /**
      * 统计评论数量
+     *
      * @param articleId
      * @return
      */
     @Override
     public Long countCommentNumber(Integer articleId) {
         return commentDao.countCommentNumber(articleId);
+    }
+
+    /**
+     * 根据博文id查询相关评论
+     *
+     * @param articleId
+     * @return
+     */
+    @Override
+    public List<Comment> selectCommentById(Integer articleId) {
+        return commentDao.selectCommentById(articleId);
     }
 
 }

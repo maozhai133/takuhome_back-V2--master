@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @Title:CommentDao
  * @Author:NekoTaku
@@ -20,6 +22,9 @@ public interface CommentDao {
 
     //2.统计评论数量
     Long countCommentNumber(@Param("articleId")Integer articleId);
+
+    //3.根据博文id查询相关评论
+    List<Comment> selectCommentById(@Param("articleId")Integer articleId);
 
     
 }

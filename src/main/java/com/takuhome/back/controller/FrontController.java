@@ -11,6 +11,8 @@ import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -65,7 +67,8 @@ public class FrontController {
         for (Article article : articles) {
             article.setArticleCreateTime(TimeUtil.getTimeFormat(article.getArticleCreateTime()));
         }
-
+        //转换列表顺序（以时间倒序）
+        Collections.reverse(articles);
 
         model.addAttribute("userFront", userInfoForFront);
         model.addAttribute("articles", articles);
@@ -108,6 +111,8 @@ public class FrontController {
 
         //根据博文id查询当前博文得评论
         List<Comment> comments = commentService.selectCommentById(articleId);
+        //转换列表顺序（以时间倒序）
+        Collections.reverse(comments);
 
         //设置时间格式
         articleById.setArticleCreateTime(TimeUtil.getTimeFormat(articleById.getArticleCreateTime()));
